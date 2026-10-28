@@ -1,0 +1,25 @@
+{
+  "sampledAt": "2026-10-16",
+  "source": "Authenticated Chrome website reads; structural summary only",
+  "accountResponse": {
+    "account": {
+      "user": { "id": "synthetic-owner", "email": "owner@example.test", "shortName": "Owner" },
+      "metadata": { "rootFolderId": "synthetic-root" }
+    }
+  },
+  "fileListResponse": {
+    "items": [{
+      "id": "synthetic-file",
+      "title": "Example sheet",
+      "mimeType": "application/vnd.google-apps.spreadsheet",
+      "trashed": false,
+      "createDateMillis": "1700000000000",
+      "modifiedDateMillis": "1791909502998",
+      "fileSize": "34060",
+      "alternateLink": "https://docs.google.com/spreadsheets/d/synthetic-file/edit?usp=drivesdk"
+    }],
+    "continuationToken": "synthetic-opaque-cursor"
+  },
+  "liveMetadataCheck": { "pages": 2, "records": 138, "uniqueIds": 138, "outsideRequestedWindow": 0 },
+  "unverified": ["extension file downloads", "other Google native formats", "uploaded-file route", "shared-drive completeness", "independent coverage audit"]
+}

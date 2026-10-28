@@ -1,0 +1,1037 @@
+{
+  "version": 1,
+  "id": "collect-public-controls-v1",
+  "labelPolicy": "collect-values-v1",
+  "annotationReview": {
+    "author": "assistant",
+    "passes": 2,
+    "independentReview": false
+  },
+  "owners": [
+    {
+      "app": "slack",
+      "accountKey": "synthetic-owner",
+      "verified": true,
+      "source": "authenticated-self-profile",
+      "names": [
+        "Case Owner"
+      ],
+      "emails": [
+        "owner@example.org"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "profile",
+      "group": "profile",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "slack/users.jsonl",
+      "input": "{\"id\":\"U00EXAMPLE\",\"team_id\":\"T00EXAMPLE\",\"color\":\"9f69e7\",\"name\":\"areed\",\"profile\":{\"real_name\":\"Alice Reed\",\"email\":\"alice.reed@gmail.com\"}}",
+      "inputSha256": "31d4828170c6841ec80b9f323a91bc3770629acb3e0ee244ff4763456bfc7eef",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 67,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "a577d6ba18a04949ff1d37c260f4e8e2986467c14a9b7b4d26439cc98beb7054"
+        },
+        {
+          "start": 67,
+          "end": 72,
+          "action": "obfuscate",
+          "category": "names",
+          "reason": "Personal username in this explicit profile.",
+          "id": "region-1",
+          "textSha256": "136c0ae6d5beeffbc5fe2caa82ad7dd02ea1dd13a79fe6e8d0744934b8d2400e"
+        },
+        {
+          "start": 72,
+          "end": 98,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "e0d030a432d3629240c65bff60b9f44bea288898f7ec59442ea06bcc7a1c798d"
+        },
+        {
+          "start": 98,
+          "end": 108,
+          "action": "obfuscate",
+          "category": "names",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-3",
+          "textSha256": "ebb8c116bc97c4e10f2a25dd81deb75eb060be78179db3ebdf14bcc48a5267be"
+        },
+        {
+          "start": 108,
+          "end": 119,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-4",
+          "textSha256": "1b9c214628dc9c82ef1e670a0c817ef00aabe9313b7079c13ca59650e3f0dd17"
+        },
+        {
+          "start": 119,
+          "end": 139,
+          "action": "obfuscate",
+          "category": "emails",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-5",
+          "textSha256": "0b3c8014efbe459452f8aed60933644ff658e8e29ebe7485d90bc816b3ffa2d2"
+        },
+        {
+          "start": 139,
+          "end": 142,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-6",
+          "textSha256": "001fdc96bd5b6029bff95c70ab2f34d546d7b734fbee5d98c2d68c463ac52442"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": [
+        {
+          "id": "public-domain-0",
+          "literal": "@gmail.com",
+          "reason": "Known public email provider must remain unchanged when the mailbox is replaced."
+        }
+      ]
+    },
+    {
+      "id": "owner",
+      "group": "owner",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "slack/users.jsonl",
+      "input": "{\"id\":\"U00OWNER\",\"profile\":{\"real_name\":\"Case Owner\",\"email\":\"owner@example.org\"}}",
+      "inputSha256": "ee23016403f11968893e6444493e6bd89cb354d6c88efa53a7ea81c47b0f7bd0",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 41,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "8f095dc7272340b6261cda6fcbf541eb9fd95b111d9b6f4ba40cec47201da381"
+        },
+        {
+          "start": 41,
+          "end": 51,
+          "action": "retain-owner",
+          "category": "names",
+          "reason": "Authenticated owner name in this fixture.",
+          "id": "region-1",
+          "textSha256": "938d4f57ec49befbff1cab5e5862bdd152a14113955a643047781f3bc8af5719"
+        },
+        {
+          "start": 51,
+          "end": 62,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "1b9c214628dc9c82ef1e670a0c817ef00aabe9313b7079c13ca59650e3f0dd17"
+        },
+        {
+          "start": 62,
+          "end": 79,
+          "action": "retain-owner",
+          "category": "emails",
+          "reason": "Authenticated owner mailbox in this fixture.",
+          "id": "region-3",
+          "textSha256": "9057178f1b2d7232db7d0fcdd9688b38a4b73cf86cefa34ef7bb2e990eee5ba2"
+        },
+        {
+          "start": 79,
+          "end": 82,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-4",
+          "textSha256": "001fdc96bd5b6029bff95c70ab2f34d546d7b734fbee5d98c2d68c463ac52442"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "owner-cross-connector",
+      "group": "owner-cross-connector",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "outlook/messages.jsonl",
+      "input": "{\"id\":\"OpaqueRecord42\",\"body\":{\"type\":\"HTML\",\"content\":\"<p>Contact owner@example.org.</p>\"},\"from\":[{\"email\":\"owner@example.org\",\"routingType\":\"SMTP\"}]}",
+      "inputSha256": "2b42a6283ca1f6c2651b2f2b3ab200cf90bce8eb9b4cb1ef9f09e6a58cd3ff91",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 67,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "38261a2accb2a91f767c98470c3f49ce77b95148747e4fa9939d5d3259c2cf4a"
+        },
+        {
+          "start": 67,
+          "end": 84,
+          "action": "retain-owner",
+          "category": "emails",
+          "reason": "Same verified owner referenced in another connector.",
+          "id": "region-1",
+          "textSha256": "9057178f1b2d7232db7d0fcdd9688b38a4b73cf86cefa34ef7bb2e990eee5ba2"
+        },
+        {
+          "start": 84,
+          "end": 110,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "18d0dad301a0cf686d28fda4a09b93dcfa5b028f77f387411d7b46c4b8191621"
+        },
+        {
+          "start": 110,
+          "end": 127,
+          "action": "retain-owner",
+          "category": "emails",
+          "reason": "Same verified owner referenced in another connector.",
+          "id": "region-3",
+          "textSha256": "9057178f1b2d7232db7d0fcdd9688b38a4b73cf86cefa34ef7bb2e990eee5ba2"
+        },
+        {
+          "start": 127,
+          "end": 152,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-4",
+          "textSha256": "33934bec6732f0165970595f5ea93bbc93da023bc681908be00131cd7ae8a153"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "owner-secret",
+      "group": "owner-secret",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "",
+      "input": "{\"password\":\"owner@example.org\"}",
+      "inputSha256": "f0c0c89f68a30cd5dd8e5e8eb780648ce899ee6790752fb5cd422c5cf477f650",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 13,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "08d154d2974cec604d10569a9610ed63840d68f9feaa2ca29de93d19a63614fc"
+        },
+        {
+          "start": 13,
+          "end": 30,
+          "action": "obfuscate",
+          "category": "secrets",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "9057178f1b2d7232db7d0fcdd9688b38a4b73cf86cefa34ef7bb2e990eee5ba2"
+        },
+        {
+          "start": 30,
+          "end": 32,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "07fac7b0e8f33a11e8f770d273e62bb0e3c86a4591c97227c2b46354aabe7f85"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "context-secret",
+      "group": "context-secret-pair",
+      "cohort": "synthetic-controls",
+      "format": "text",
+      "context": "",
+      "input": "Enter sunshine when the login screen asks for the secret.",
+      "inputSha256": "8e05c376ce794466c54b8a04aa35267068d886c91a0a4391b9d927c5e6475ebf",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 6,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "1d174814bac2fd9e6af478cc681bb50e22710e3b8a65597256723cdc8c190ea7"
+        },
+        {
+          "start": 6,
+          "end": 14,
+          "action": "obfuscate",
+          "category": "secrets",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "a941a4c4fd0c01cddef61b8be963bf4c1e2b0811c037ce3f1835fddf6ef6c223"
+        },
+        {
+          "start": 14,
+          "end": 57,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "2b4eea6b4cd7160c880eb2ed619c710da1d36955ae017971e3b69f203a68cbd9"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "ordinary-homonym",
+      "group": "context-secret-pair",
+      "cohort": "synthetic-controls",
+      "format": "text",
+      "context": "",
+      "input": "The flowers in the garden need sunshine.",
+      "inputSha256": "87428dda7a8501b5bd72594b5781979f13b49f395fbc01e307cd19ea3f7ce09b",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 40,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "87428dda7a8501b5bd72594b5781979f13b49f395fbc01e307cd19ea3f7ce09b"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "context-api",
+      "group": "context-api",
+      "cohort": "synthetic-controls",
+      "format": "text",
+      "context": "",
+      "input": "Set the Authorization header to 7c9e2a4f5b6d0e8a for every request to our API.",
+      "inputSha256": "80f31fd3fc1b6e7e866a5e4509118487e315261217f7e7454c7bbec4aa88b53b",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 32,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "9e6f51037b0e88b64f16269a63bbe7416c6b2dcb00c54517ede0426c76a01724"
+        },
+        {
+          "start": 32,
+          "end": 48,
+          "action": "obfuscate",
+          "category": "secrets",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "63559ca491d4f45e2c9ce48affa55addce4cb40404dece873ede9ecfd5c6014c"
+        },
+        {
+          "start": 48,
+          "end": 78,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "41af536ba8d0f55d8223315ec2f816d4d63adc9aba7c4af50d6974244397e17b"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "passport",
+      "group": "passport",
+      "cohort": "synthetic-controls",
+      "format": "text",
+      "context": "",
+      "input": "Book the ticket using A96073278, the number on my passport.",
+      "inputSha256": "8f40de75c0effb34044f0caaf792cd93b815ba9cc07ac74535e9f1bb81e7a704",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 22,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "5ef3e050877317a829a380f979274fd027a15870fc58016cada917538dd3c49f"
+        },
+        {
+          "start": 22,
+          "end": 31,
+          "action": "obfuscate",
+          "category": "identifiers",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "8af24a9578b7b970b48564cc1325f0043afb24e9d96fc93588f1d2994378e06c"
+        },
+        {
+          "start": 31,
+          "end": 59,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "05d61cce01fafea6043200a8303b7798eb84cc05d2cc9d5d9d6cc815e210cc20"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "address",
+      "group": "address",
+      "cohort": "synthetic-controls",
+      "format": "text",
+      "context": "",
+      "input": "Please deliver it to 10 Herzl, Tel Aviv, Israel.",
+      "inputSha256": "626e51f3c6d58dfa012e98c259108fb3b4ad14ca8c3a6b522e6dcb7e68e77ef9",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 21,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "5188c8886613da3455de75326524025b68030898acf0dbdc825767a05583b530"
+        },
+        {
+          "start": 21,
+          "end": 47,
+          "action": "obfuscate",
+          "category": "addresses",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "fac9e31911a749357ab65d0adcc80cf8826d8f1e7c99accc7a00bab7aa69fa2d"
+        },
+        {
+          "start": 47,
+          "end": 48,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "cdb4ee2aea69cc6a83331bbe96dc2caa9a299d21329efb0336fc02a82e1839a8"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "french-address",
+      "group": "french-address",
+      "cohort": "synthetic-controls",
+      "format": "text",
+      "context": "",
+      "input": "Please send the package to 12 rue des Lilas, 75019 Paris, France.",
+      "inputSha256": "1065d8fcbf712d21005d4721cb01fece48f8863344d41fc414b873856a956323",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 27,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "de178167f4f459437a6e694c036de08823c6ff7d0bfbb53a214bb8ce245a4285"
+        },
+        {
+          "start": 27,
+          "end": 64,
+          "action": "obfuscate",
+          "category": "addresses",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "7e48a5085bbf86baf29d0e1f6dcfb484419d6cf7bd1218ed46bb159367d2c040"
+        },
+        {
+          "start": 64,
+          "end": 65,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "cdb4ee2aea69cc6a83331bbe96dc2caa9a299d21329efb0336fc02a82e1839a8"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "phone",
+      "group": "phone",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "",
+      "input": "{\"phone\":\"+1 202 555 0198\"}",
+      "inputSha256": "c28884005bdaa9c01b009f51d4c3b99aa3612e333cd580e090e9fbdee69b1100",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 10,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "3befc962a1f371ef51fefac815d3252836cde3dafa4e932173dd68cd0d26bf79"
+        },
+        {
+          "start": 10,
+          "end": 25,
+          "action": "obfuscate",
+          "category": "phones",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "9197e72e7d8e04ba544626471afb4d4f2caeef9fba9ed4473bcdbf834bfcfe43"
+        },
+        {
+          "start": 25,
+          "end": 27,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "07fac7b0e8f33a11e8f770d273e62bb0e3c86a4591c97227c2b46354aabe7f85"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "private-company",
+      "group": "private-company",
+      "cohort": "synthetic-controls",
+      "format": "text",
+      "context": "",
+      "input": "Alice Reed works at Cedar Valley Analytics.",
+      "inputSha256": "a41337006c67c33132d41abee2591882182efacfae7164cd7ff21652357c109c",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 10,
+          "action": "obfuscate",
+          "category": "names",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-0",
+          "textSha256": "ebb8c116bc97c4e10f2a25dd81deb75eb060be78179db3ebdf14bcc48a5267be"
+        },
+        {
+          "start": 10,
+          "end": 20,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-1",
+          "textSha256": "b855c6ea76d5b27017490384d7f8fde3813ba8677368dc9be5bba784b2229c46"
+        },
+        {
+          "start": 20,
+          "end": 42,
+          "action": "obfuscate",
+          "category": "companies",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-2",
+          "textSha256": "9fe99d35d3754eaf7c1f395752926b34f5ad0c28f17e06bc10abb1fd16b8908c"
+        },
+        {
+          "start": 42,
+          "end": 43,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-3",
+          "textSha256": "cdb4ee2aea69cc6a83331bbe96dc2caa9a299d21329efb0336fc02a82e1839a8"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "public-brands",
+      "group": "public-brands",
+      "cohort": "synthetic-controls",
+      "format": "text",
+      "context": "",
+      "input": "We use Google, Microsoft, Apple and Slack at work.",
+      "inputSha256": "28fc366bc57381393d31f63ea07257511583364e49402f46b2223c548686b055",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 7,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "f01f200e156caa55102838caa874ed22f7b3e2676df030908563d3796838ef41"
+        },
+        {
+          "start": 7,
+          "end": 13,
+          "action": "retain-public",
+          "category": null,
+          "reason": "Recognized public brand or provider, not private identity.",
+          "id": "region-1",
+          "textSha256": "ce770667e5f9b0d8f55367bb79419689d90c48451bb33f079f3a9a72ae132de8"
+        },
+        {
+          "start": 13,
+          "end": 15,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "0a07f659461970d8d8dcefe4fff96a1745599810dc7d47391e95c803b7b2072c"
+        },
+        {
+          "start": 15,
+          "end": 24,
+          "action": "retain-public",
+          "category": null,
+          "reason": "Recognized public brand or provider, not private identity.",
+          "id": "region-3",
+          "textSha256": "c7bac46904be785cd0c965bf5659610044f0cdb4cbb02d2ec398dc56648988fd"
+        },
+        {
+          "start": 24,
+          "end": 26,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-4",
+          "textSha256": "0a07f659461970d8d8dcefe4fff96a1745599810dc7d47391e95c803b7b2072c"
+        },
+        {
+          "start": 26,
+          "end": 31,
+          "action": "retain-public",
+          "category": null,
+          "reason": "Recognized public brand or provider, not private identity.",
+          "id": "region-5",
+          "textSha256": "f223faa96f22916294922b171a2696d868fd1f9129302eb41a45b2a2ea2ebbfd"
+        },
+        {
+          "start": 31,
+          "end": 36,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-6",
+          "textSha256": "e3ee915a8e8c7aa02d2fced443314522b20824abd2535d5959c41dc8ab8a09e4"
+        },
+        {
+          "start": 36,
+          "end": 41,
+          "action": "retain-public",
+          "category": null,
+          "reason": "Recognized public brand or provider, not private identity.",
+          "id": "region-7",
+          "textSha256": "b27fb38ba323745c91fe7fd9021605430d43bdb7d3be765266e29364d103e26f"
+        },
+        {
+          "start": 41,
+          "end": 50,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-8",
+          "textSha256": "b6ab272b69bba5906e7e154566739f243d7ce9d29c752baae4a4b1a8006298a8"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "brand-password",
+      "group": "brand-password",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "",
+      "input": "{\"password\":\"Google\"}",
+      "inputSha256": "8a68d8fd082166f72ae8600973a2842923a6c5db8f8d777e413bbf45fbac4711",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 13,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "08d154d2974cec604d10569a9610ed63840d68f9feaa2ca29de93d19a63614fc"
+        },
+        {
+          "start": 13,
+          "end": 19,
+          "action": "obfuscate",
+          "category": "secrets",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "ce770667e5f9b0d8f55367bb79419689d90c48451bb33f079f3a9a72ae132de8"
+        },
+        {
+          "start": 19,
+          "end": 21,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "07fac7b0e8f33a11e8f770d273e62bb0e3c86a4591c97227c2b46354aabe7f85"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "numeric-secret",
+      "group": "numeric-secret",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "",
+      "input": "{\"password\":960732}",
+      "inputSha256": "ee76458536b0a318e7eafd5f3af5e13caf9b45e5a0900bbcaedf664ac8cac9aa",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 12,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "68ebd8050dd101d12d71dba614a988e7e50529ddee71a65d057de0badb5d01e7"
+        },
+        {
+          "start": 12,
+          "end": 18,
+          "action": "obfuscate",
+          "category": "secrets",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "3815a3a2c3ad7782b9dd2acc088806c0c3ee55caca78af8b99f5b1e8bf237c16"
+        },
+        {
+          "start": 18,
+          "end": 19,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "d10b36aa74a59bcf4a88185837f658afaf3646eff2bb16c3928d0e9335e945d2"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "html-inline",
+      "group": "html-inline",
+      "cohort": "synthetic-controls",
+      "format": "html",
+      "context": "",
+      "input": "<p>Enter <b>sunshine</b> when the login screen asks for the secret.</p>",
+      "inputSha256": "356cadc7cbb44e5d6b092a087f0b6a53765bb4793692b658e5e1bf0b84ab5c9e",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 12,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "11bd3af69fe382fd3076e9cdd999777225f3510bfab9d080c329084b3255307c"
+        },
+        {
+          "start": 12,
+          "end": 20,
+          "action": "obfuscate",
+          "category": "secrets",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "a941a4c4fd0c01cddef61b8be963bf4c1e2b0811c037ce3f1835fddf6ef6c223"
+        },
+        {
+          "start": 20,
+          "end": 71,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "3520e1422a6f1b46eacf8a38dd011774dcf325c52159fc8220400427c54e239c"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "html-entity",
+      "group": "html-entity",
+      "cohort": "synthetic-controls",
+      "format": "html",
+      "context": "",
+      "input": "<p>Contact Al&#105;ce Reed.</p>",
+      "inputSha256": "7f06f32f4438df03cb350dc03d9937e420b196bdd387fa1f78e20ab753b87044",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 11,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "2499b1192484cfec46183a1e13edb799695e8fc658c2b1da2c6a623cf5a91ddf"
+        },
+        {
+          "start": 11,
+          "end": 26,
+          "action": "obfuscate",
+          "category": "names",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "493f681ce867af921e13a8e13e098c70932db7da60de5b92fd8f91ea060894f5"
+        },
+        {
+          "start": 26,
+          "end": 31,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "6878f847613535dcb0ecf254498e0c5bc1f0d3af359bdf9c14f3795c4baa3629"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "xml",
+      "group": "xml",
+      "cohort": "synthetic-controls",
+      "format": "xml",
+      "context": "",
+      "input": "<contact><full_name>Alice Reed</full_name><email>alice.reed@gmail.com</email></contact>",
+      "inputSha256": "1a27b9c1f515ac0352d1bd12bb9a79f8beec001967b10600347960e1740d6257",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 20,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "948a13b0a1fb36aafd3fa69db83fcdab7153c38afd3f112ab7822744251033b9"
+        },
+        {
+          "start": 20,
+          "end": 30,
+          "action": "obfuscate",
+          "category": "names",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "ebb8c116bc97c4e10f2a25dd81deb75eb060be78179db3ebdf14bcc48a5267be"
+        },
+        {
+          "start": 30,
+          "end": 49,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "fd6f2035221f177a6ba8977bed6634209ccb8908c7a7141827f525fef99733bc"
+        },
+        {
+          "start": 49,
+          "end": 69,
+          "action": "obfuscate",
+          "category": "emails",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-3",
+          "textSha256": "0b3c8014efbe459452f8aed60933644ff658e8e29ebe7485d90bc816b3ffa2d2"
+        },
+        {
+          "start": 69,
+          "end": 87,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-4",
+          "textSha256": "bb42909e7f27dbfcccd0b40e1562124e84ba0bda28ff85d322dcd29baf092305"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": [
+        {
+          "id": "public-domain-0",
+          "literal": "@gmail.com",
+          "reason": "Known public email provider must remain unchanged when the mailbox is replaced."
+        }
+      ]
+    },
+    {
+      "id": "csv",
+      "group": "csv",
+      "cohort": "synthetic-controls",
+      "format": "csv",
+      "context": "",
+      "input": "full_name,email\r\nAlice Reed,alice.reed@gmail.com\r\n",
+      "inputSha256": "c9173bbf46d19af6240c2202a7f1c3ba16f1fed96a79e9aceaf2bdb20ca1fc84",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 17,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "0ef194ff0a42f1874fbd60617457e5ecfa087efee3968d08a19e0bcf705f6051"
+        },
+        {
+          "start": 17,
+          "end": 27,
+          "action": "obfuscate",
+          "category": "names",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-1",
+          "textSha256": "ebb8c116bc97c4e10f2a25dd81deb75eb060be78179db3ebdf14bcc48a5267be"
+        },
+        {
+          "start": 27,
+          "end": 28,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-2",
+          "textSha256": "d03502c43d74a30b936740a9517dc4ea2b2ad7168caa0a774cefe793ce0b33e7"
+        },
+        {
+          "start": 28,
+          "end": 48,
+          "action": "obfuscate",
+          "category": "emails",
+          "reason": "Explicit sensitive meaning in the fixture context.",
+          "id": "region-3",
+          "textSha256": "0b3c8014efbe459452f8aed60933644ff658e8e29ebe7485d90bc816b3ffa2d2"
+        },
+        {
+          "start": 48,
+          "end": 50,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-4",
+          "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": [
+        {
+          "id": "public-domain-0",
+          "literal": "@gmail.com",
+          "reason": "Known public email provider must remain unchanged when the mailbox is replaced."
+        }
+      ]
+    },
+    {
+      "id": "slack-metadata",
+      "group": "slack-metadata",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "slack/messages.jsonl",
+      "input": "{\"channel\":\"C00EXAMPLE\",\"user\":\"U00EXAMPLE\",\"ts\":\"1729183602.000001\",\"type\":\"message\",\"blocks\":[{\"block_id\":\"OpaqueBlock42\",\"type\":\"rich_text\",\"elements\":[{\"type\":\"text\",\"text\":\"Please review the agenda.\"}]}]}",
+      "inputSha256": "bbc0575d7843a72eb714ffad81c4a6c58a4473720478f7e9a65e651119a5b391",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 209,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "bbc0575d7843a72eb714ffad81c4a6c58a4473720478f7e9a65e651119a5b391"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    },
+    {
+      "id": "outlook-folder",
+      "group": "outlook-folder",
+      "cohort": "synthetic-controls",
+      "format": "json",
+      "context": "outlook/folders.jsonl",
+      "input": "{\"id\":\"OpaqueFolder42\",\"parentId\":\"OpaqueParent42\",\"folderClass\":\"IPF.Note\",\"name\":\"Inbox\"}",
+      "inputSha256": "479fd2737b5d2a6f9a85ae7f68b179b00887d91b0ac4a8b8e99f6c588700e7e3",
+      "exhaustive": true,
+      "provenance": {
+        "derivation": "independently authored synthetic control inspired by observed export structures, no source account values"
+      },
+      "regions": [
+        {
+          "start": 0,
+          "end": 91,
+          "action": "ignore",
+          "reason": "Ordinary prose or immutable format syntax.",
+          "id": "region-0",
+          "textSha256": "479fd2737b5d2a6f9a85ae7f68b179b00887d91b0ac4a8b8e99f6c588700e7e3"
+        }
+      ],
+      "split": "regression",
+      "literalInvariants": []
+    }
+  ]
+}

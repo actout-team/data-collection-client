@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>AgentSim Collect</title><link rel="stylesheet" href="style.css"></head>
+<body><main>
+<header><span class="eyebrow">AGENTSIM / COLLECT</span><span id="bridge" class="badge">Chrome not paired</span></header>
+<h1>Local data export</h1>
+<nav aria-label="Collection steps"><ol id="steps" class="steps"></ol></nav>
+<div id="pages">
+<section class="page" data-step="0" aria-labelledby="browser-title">
+<div class="section-heading"><span class="eyebrow">01 / YOUR BROWSER</span><h2 id="browser-title" tabindex="-1">Connect browser</h2><p>Use your signed-in work profile.</p></div>
+<div class="browser-card"><div class="browser-symbol" aria-hidden="true"></div><div><h3>Google Chrome</h3><p id="browser-state" role="status">Keep Chrome open.</p></div></div>
+<details class="setup" open><summary>Extension setup</summary><ol>
+<li>Open <button id="chrome-extensions" class="link">chrome://extensions</button> and enable <strong>Developer mode</strong>.</li>
+<li>Choose <strong>Load unpacked</strong>, then this folder:<code id="extension-path"></code><button id="extension" class="link">Open folder</button> · <button id="copy-extension-folder" class="link">Copy path</button></li>
+<li>Open <strong>AgentSim Local Bridge</strong>. Click <strong>Pair desktop app</strong> and approve site access and the desktop connection.</li>
+</ol></details>
+</section>
+<section class="page" data-step="1" hidden aria-labelledby="apps-title">
+<div class="section-heading"><span class="eyebrow">02 / WORK APPS</span><h2 id="apps-title" tabindex="-1">Choose apps</h2></div>
+<div class="search-row"><label class="search-box"><span aria-hidden="true">⌕</span><input id="app-search" type="search" placeholder="Search apps" aria-label="Search apps"></label><span id="selected-count" class="selection-count"></span></div>
+<p class="catalog-note">Experimental: captures while browsing. Pending: unavailable.</p>
+<section id="connectors" aria-label="Apps"></section><p id="no-apps" class="empty" hidden>No matches</p>
+<nav class="pagination" aria-label="App pages"><span id="app-results" aria-live="polite"></span><div><button id="previous-page" class="secondary" aria-label="Previous app page">←</button><span id="page-number"></span><button id="next-page" class="secondary" aria-label="Next app page">→</button></div></nav>
+</section>
+<section class="page" data-step="2" hidden aria-labelledby="download-title">
+<div class="section-heading"><span class="eyebrow">03 / COLLECTION</span><h2 id="download-title" tabindex="-1">Download</h2><p id="download-apps"></p></div>
+<div class="time-window"><label for="days-back">Days back</label><input id="days-back" type="number" min="1" max="36500" step="1" value="90" required></div>
+<p id="capture-note" class="notice" hidden>Experimental apps: browse after connecting to capture data. Days back does not apply.</p>
+<div class="destination"><div><span class="eyebrow">SAVE TO</span><p id="folder"></p></div><button id="choose" class="secondary">Change</button></div>
+<div class="actions"><button id="download" class="primary" disabled>Download</button><button id="cancel" class="secondary" hidden>Abort</button></div>
+<section id="transfer" class="transfer" hidden aria-label="Download progress">
+<div class="transfer-line"><strong id="transfer-title">Downloading</strong><span id="transfer-eta">Estimating…</span></div>
+<div id="transfer-bar" class="track overall" role="progressbar" aria-label="Overall estimated progress" aria-valuemin="0" aria-valuemax="100"><div class="fill"></div></div>
+<small id="transfer-percent"></small><div id="transfer-apps"></div>
+
+</section>
+</section>
+<section class="page" data-step="3" hidden aria-labelledby="protection-title">
+<div class="section-heading"><h2 id="protection-title" tabindex="-1">Protect your data</h2><p>Create a copy with linked, realistic replacements.</p></div>
+<div id="protection-options" class="protection-options"></div>
+<div class="replacement-settings"><label for="generation-mode">Replacement generator<select id="generation-mode"><option value="local-model">Local model + format checks</option><option value="pools">Offline name pools (limited coverage)</option></select></label><label for="name-style">Name spelling style<select id="name-style"></select></label></div><p id="generation-help" class="subtle protection-note"></p><p class="subtle protection-note">Replacements aim to keep naming style and linked email usernames. Recognized public entities stay unchanged. Verified account-owner names, emails, phones and addresses are retained; passwords and private identifiers still change. Review before sharing.</p>
+<div class="actions"><button id="protect" class="primary">Create protected copy</button><button id="abort-protection" class="secondary" hidden>Abort</button></div>
+<div id="protection-progress" class="protection-progress" hidden><div class="transfer-line"><strong id="protection-phase"></strong><span id="protection-count"></span></div><div id="protection-bar" class="track overall" role="progressbar" aria-label="Protection progress" aria-valuemin="0" aria-valuemax="100"><div class="fill"></div></div><p id="protection-result" class="subtle"></p><button id="review-protection" class="link" hidden>Review report</button></div>
+<p class="subtle">Originals stay unchanged. The separate mapping file contains original values. Keep it private.</p>
+</section>
+<section class="page" data-step="4" hidden aria-labelledby="export-title">
+<div class="section-heading"><span class="eyebrow">05 / YOUR FILES</span><h2 id="export-title" tabindex="-1">Export</h2></div>
+<div class="export-card"><span class="export-symbol" aria-hidden="true">↓</span><div><h3 id="export-summary">No export yet</h3><p id="export-detail"></p></div></div>
+<code id="export-path" class="file-path"></code>
+<p class="subtle">Same folder structure and formats. Review the protection report before sharing.</p>
+<div class="actions"><button id="output" class="primary" disabled>Open folder</button><button id="mapping" class="secondary" disabled>Show mapping</button><button id="export-report" class="secondary" disabled>Review report</button></div><p class="subtle">The mapping contains originals, is not encrypted, and stays outside the copied folder.</p>
+</section>
+</div>
+<div class="step-navigation"><button id="previous-step" class="secondary">← Back</button><button id="next-step" class="primary">Next →</button></div>
+
+<details class="status-bar logs"><summary><span id="status" role="status" aria-live="polite">Ready</span><span class="log-label">Log</span></summary><div class="status-expanded"><div class="log-toolbar"><p id="status-detail"></p><button id="copy-logs" class="link">Copy</button></div><pre id="log" role="log" aria-label="Application and extension diagnostics"></pre></div></details>
+
+</main><script type="module" src="app.mjs"></script></body></html>

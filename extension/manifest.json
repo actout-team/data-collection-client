@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "AgentSim Local Bridge",
+  "version": "0.3.44",
+  "description": "Connect selected business apps to the local AgentSim collector. Cookies stay in your browser.",
+  "permissions": [
+    "cookies",
+    "scripting",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*"
+  ],
+  "optional_host_permissions": [
+    "https://*.slack.com/*",
+    "https://mail.google.com/*",
+    "https://app.hubspot.com/*",
+    "https://app-eu1.hubspot.com/*",
+    "https://app-na1.hubspot.com/*",
+    "https://app-na2.hubspot.com/*",
+    "https://*.lightning.force.com/*",
+    "https://*.my.salesforce.com/*",
+    "https://qbo.intuit.com/*",
+    "https://*.qbo.intuit.com/*",
+    "https://go.xero.com/*",
+    "https://*.xero.com/*",
+    "https://app.gusto.com/*",
+    "https://app.deel.com/*",
+    "https://www.notion.so/*",
+    "https://notion.so/*",
+    "https://app.notion.com/*",
+    "https://app.asana.com/*",
+    "https://outlook.live.com/*"
+  ],
+  "background": {
+    "service_worker": "background.mjs",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Open AgentSim Local Bridge"
+  },
+  "options_ui": {
+    "page": "popup.html",
+    "open_in_tab": true
+  }
+}

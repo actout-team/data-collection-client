@@ -1,0 +1,34 @@
+# Dependencies and generated builds
+node_modules/
+dist/
+coverage/
+extension/*-bundle.js
+
+# Local exports, credentials and benchmarks
+data/
+downloads/
+.local/
+benchmarks/private/
+*.private.json
+*.pem
+.env
+.env.*
+
+# Downloaded models and native runtimes
+.model-cache/
+*.onnx
+*.gguf
+*.gguf.*
+replacement-runtime/
+
+# Editor, temporary and backup files
+.DS_Store
+*.log
+*.tmp
+*.part
+*.partial
+*.bak
+*.orig
+*.rej
+*.swp
+*~

@@ -1,0 +1,34 @@
+name: Protection regression benchmark
+on:
+  push:
+    paths: ['src/**', 'extension/**', 'ui/**', 'scripts/**', 'benchmarks/**', 'test/**', 'package*.json', '.github/workflows/protection-benchmark.yml']
+  pull_request:
+    paths: ['src/**', 'extension/**', 'ui/**', 'scripts/**', 'benchmarks/**', 'test/**', 'package*.json', '.github/workflows/protection-benchmark.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      AGENTSIM_TEST_MODEL_CACHE: ${{ github.workspace }}/.model-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/cache@v4
+        with:
+          path: .model-cache
+          key: gliner-9b7f39b-uint8-float32-v1
+      - run: npm ci
+      - run: npm run validate:protection -- --public-only
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-protection-benchmark
+          path: .local/benchmark/public.*.json
+          include-hidden-files: true

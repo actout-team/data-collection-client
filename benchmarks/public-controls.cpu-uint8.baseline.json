@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "datasetSha256": "a08d10c071f9313f46167b9eb325819cb211414e2add86c7b5bbc879b3e51901",
+  "signature": {
+    "model": "knowledgator/gliner-pii-edge-v1.0",
+    "revision": "9b7f39b0a2da971a5beea78d35f1539d4009c891",
+    "precision": "uint8",
+    "backend": "cpu",
+    "threshold": 0.4,
+    "categories": [
+      "names",
+      "companies",
+      "emails",
+      "phones",
+      "addresses",
+      "secrets",
+      "identifiers"
+    ]
+  },
+  "sourceRevision": "36b2b3a1942cc1f582553e1d35bdbd7f926f90af38552c06b77a24c375bd64e9",
+  "summary": {
+    "cases": 21,
+    "groups": 20,
+    "sensitive": 20,
+    "covered": 20,
+    "retained": 56,
+    "protectedChanges": 1,
+    "review": 0,
+    "correctEdits": 20,
+    "unexpectedEdits": 1,
+    "excludedEdits": 0,
+    "fullyCorrectCases": 20,
+    "invariantFailures": 0,
+    "completeSensitiveRecall": 1,
+    "editPrecision": 0.9523809523809523,
+    "retainedValueViolationRate": 0.017857142857142856,
+    "byCategory": {
+      "names": {
+        "total": 6,
+        "covered": 6
+      },
+      "emails": {
+        "total": 3,
+        "covered": 3
+      },
+      "secrets": {
+        "total": 6,
+        "covered": 6
+      },
+      "identifiers": {
+        "total": 1,
+        "covered": 1
+      },
+      "addresses": {
+        "total": 2,
+        "covered": 2
+      },
+      "phones": {
+        "total": 1,
+        "covered": 1
+      },
+      "companies": {
+        "total": 1,
+        "covered": 1
+      }
+    }
+  },
+  "failures": [
+    "ordinary-homonym:retained:region-0",
+    "ordinary-homonym:unexpected:31:39"
+  ],
+  "coverage": {
+    "profile/region-1": 5,
+    "profile/region-3": 9,
+    "profile/region-5": 20,
+    "owner-secret/region-1": 17,
+    "context-secret/region-1": 8,
+    "context-api/region-1": 16,
+    "passport/region-1": 9,
+    "address/region-1": 22,
+    "french-address/region-1": 31,
+    "phone/region-1": 12,
+    "private-company/region-0": 9,
+    "private-company/region-2": 20,
+    "brand-password/region-1": 6,
+    "numeric-secret/region-1": 6,
+    "html-inline/region-1": 8,
+    "html-entity/region-1": 14,
+    "xml/region-1": 9,
+    "xml/region-3": 20,
+    "csv/region-1": 9,
+    "csv/region-3": 20
+  }
+}

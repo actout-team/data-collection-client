@@ -1,0 +1,12 @@
+Brand glyphs from Simple Icons (CC0-1.0). Brand names and logos remain the property of their owners.
+https://github.com/simple-icons/simple-icons
+https://github.com/simple-icons/simple-icons/blob/develop/icons/hubspot.svg
+https://github.com/simple-icons/simple-icons/blob/develop/icons/quickbooks.svg
+https://github.com/simple-icons/simple-icons/blob/develop/icons/xero.svg
+https://github.com/simple-icons/simple-icons/blob/develop/icons/gusto.svg
+https://github.com/simple-icons/simple-icons/blob/develop/icons/notion.svg
+https://github.com/simple-icons/simple-icons/blob/develop/icons/asana.svg
+https://github.com/simple-icons/simple-icons/blob/develop/icons/trello.svg
+https://github.com/simple-icons/simple-icons/blob/develop/icons/zoom.svg
+https://github.com/simple-icons/simple-icons/blob/develop/icons/googledrive.svg
+Other icons are locally drawn app identifiers.

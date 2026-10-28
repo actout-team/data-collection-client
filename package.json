@@ -1,0 +1,61 @@
+{
+  "name": "agentsim-collect",
+  "version": "0.3.44",
+  "description": "Local browser-session data export",
+  "author": "AgentSim",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/main.mjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.mjs",
+    "dist": "electron-builder --mac dmg --arm64 --x64",
+    "build:extension": "node scripts/build-extension.mjs",
+    "prestart": "npm run build:extension",
+    "predist": "npm run build:extension",
+    "check": "node scripts/check.mjs",
+    "test:protection-model": "node scripts/test-protection-model.mjs",
+    "test:contextual-pii": "node scripts/test-contextual-pii.mjs",
+    "test:replacement-model": "node scripts/test-replacement-model.mjs",
+    "benchmark:protection": "node scripts/benchmark-protection.mjs",
+    "validate:protection": "node scripts/validate-protection.mjs",
+    "pretest": "npm run build:extension"
+  },
+  "devDependencies": {
+    "electron": "44.7.2",
+    "electron-builder": "26.0.12"
+  },
+  "build": {
+    "appId": "com.agentsim.collect",
+    "productName": "AgentSim Collect",
+    "files": [
+      "src/**",
+      "ui/**",
+      "extension/**",
+      "package.json",
+      "LICENSE"
+    ],
+    "extraResources": [
+      {
+        "from": "extension",
+        "to": "chrome-extension"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg"
+    },
+    "asar": false
+  },
+  "dependencies": {
+    "@huggingface/tokenizers": "0.2.0",
+    "csv-parse": "7.0.3",
+    "entities": "8.1.0",
+    "onnxruntime-node": "1.23.2",
+    "parse5": "8.0.1",
+    "saxes": "6.0.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
