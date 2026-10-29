@@ -48,7 +48,7 @@ export async function createNeural({ directory, categories, signal, progress, lo
     }
   }
   return {
-    get info() { return { id: model.id, revision: model.revision, precision: model.precision, language: model.language, threshold: model.threshold, admissionPolicy: 'contextual-values-v3', contextPolicy: 'passage-scoped-with-visible-dom-v2', runtime: 'ONNX Runtime', backend: worker.backend, backendLabel: backendLabel(worker.backend), acceleration: worker.acceleration, inferenceCalls, cacheHits, network: 'model download only' }; },
+    get info() { return { id: model.id, revision: model.revision, precision: model.precision, language: model.language, threshold: model.threshold, admissionPolicy: 'contextual-values-v3', promptPolicy: 'company-contrast-v1', contextPolicy: 'passage-scoped-with-visible-dom-v2', runtime: 'ONNX Runtime', backend: worker.backend, backendLabel: backendLabel(worker.backend), acceleration: worker.acceleration, inferenceCalls, cacheHits, network: 'model download only' }; },
     discover: (value, detector, tick) => discoverMany([value], detector, tick), discoverMany,
     get scanned() { return scanned; },
     close() { return closed ||= (async () => { log('info', `Model scan: ${scanned} text fragments, ${inferenceCalls} model calls, ${cacheHits} cache hits, ${Math.round((performance.now() - started) / 1000)} seconds.`); await worker.close(); })(); }

@@ -1,6 +1,6 @@
 {
   "name": "actout-collect-client",
-  "version": "0.3.46",
+  "version": "0.3.47",
   "description": "Local browser-session data export",
   "author": "ActOut",
   "license": "MIT",

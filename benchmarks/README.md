@@ -29,7 +29,17 @@ contributors without private data explicitly use `-- --public-only`.
 The private clear-error extension adds 1,105 reviewed originals and 19 contextual
 controls. It excludes unresolved short-number detections from error labels.
 Standalone term projections test neutral usage, not their unavailable source
-contexts. Report this targeted suite separately from the original benchmark.
+contexts. The identity-control extension adds 24 synthetic cases (16 company
+and eight person identities), including unfamiliar names, acronyms, lowercase
+names and Hebrew. Its labels were authored before inference. It reveals five
+additional pre-existing detection misses in each precision and one additional
+partial miss in UINT8; do not omit these cases from the headline results.
+
+Use **all current suites** for the primary comparison, with per-suite results
+retained for diagnosis. The current total is 1,481 cases, 2,251 scored regions
+(370 sensitive and 1,881 retained), plus 290 unresolved review regions.
+The 301 uncertain short-number error candidates remain excluded; existing
+explicit numeric-password and authentication-code controls stay in the suite.
 
 Each case stores exact input, source provenance, UTF-16 half-open offsets and
 SHA-256 hashes for the input and annotated text. Offsets refer to serialized
@@ -84,8 +94,10 @@ Report these metrics separately:
   groups, review exclusions and candidate provenance.
 
 Categories stratify gold-label coverage, not predicted-category classification accuracy.
-Recall and precision have different units. Do not compute F1 from these values
-or claim overall accuracy. There is no representative prevalence, independent
+Complete sensitive recall and edit precision have different units. Do not
+compute F1 from those two values. Binary region counts can support accuracy,
+precision and F1 for this regression corpus, but not production estimates.
+There is no representative prevalence, independent
 labeler agreement or production recall estimate. No confidence interval is
 reported as if correlated occurrences were independent.
 
@@ -117,6 +129,23 @@ Private extensions named `ground-truth.<suite>.private.json` are included
 automatically, using `baseline.<suite>.cpu-uint8.json` and
 `baseline.<suite>.cpu-float32.json` in the same directory. Keep the original
 dataset and baselines unchanged when adding a suite.
+
+After validation, `aggregate.cpu-uint8.json` and `aggregate.cpu-float32.json`
+in `.local/benchmark/` contain the full results. Aggregation sums region counts,
+records each dataset hash and rejects duplicate datasets, mixed model settings
+or mixed source revisions. `--public-only` produces explicitly limited results.
+Never substitute the smaller CI dataset for the complete local evaluation.
+
+Version 0.3.47 adds a second semantic prompt for company candidates, comparing
+identity labels with ordinary words, technical terms and markup. It adds no
+term-specific allowlists or denylists. Short identity fragments and numeric
+decisions retain the existing policy. The verifier only filters primary
+company spans; it cannot introduce detections or public-entity exemptions.
+Each passage containing an eligible company candidate needs an additional
+inference pass with the same local model. No additional model is downloaded.
+Compared with 0.3.46 on the same full corpus, false positives fall from 569 to
+501 in FP32 and from 425 to 341 in UINT8, with unchanged sensitive coverage
+and no new per-case regression failures. Known failures remain in the baseline.
 
 A baseline is created only with explicit `--write-baseline --baseline NEW_PATH`.
 It refuses to overwrite an existing file. Never refresh a baseline to make a

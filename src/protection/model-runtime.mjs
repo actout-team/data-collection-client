@@ -6,8 +6,9 @@ import * as ort from 'onnxruntime-node';
 import { admitModelSpan } from './entity-quality.mjs';
 import { MODEL, LABELS } from './model-config.mjs';
 import { encodeWords } from './model-tokens.mjs';
+import { CONTRAST_LABELS, needsCompanyConfirmation, confirmCompanies } from './model-prompt.mjs';
 const sigmoid = value => 1 / (1 + Math.exp(-value));
-export function decode(logits, tokens, labels, offset = 0, text) {
+export function decode(logits, tokens, labels, offset = 0, text, labelCategories = LABELS) {
   const n = tokens.length, c = labels.length;
   if (logits.dims.join(',') !== `1,${n},${c},3`) throw Error(`Unexpected local model output shape: ${logits.dims}; expected 1,${n},${c},3.`);
   const score = (position, token, label) => sigmoid(logits.data[(token * c + label) * 3 + position]);
@@ -18,18 +19,18 @@ export function decode(logits, tokens, labels, offset = 0, text) {
     for (let end = start; end < n; end++) {
       const inside = score(2, end, label); if (inside < MODEL.threshold) break;
       total += inside;
-      if (score(1, end, label) >= MODEL.threshold) found.push({ start: offset + tokens[start].start, end: offset + tokens[end].end, category: LABELS[labels[label]], label: labels[label], score: Math.min(score(0, start, label), score(1, end, label), total / (end - start + 1)) });
+      if (score(1, end, label) >= MODEL.threshold) found.push({ start: offset + tokens[start].start, end: offset + tokens[end].end, category: labelCategories[labels[label]], label: labels[label], score: Math.min(score(0, start, label), score(1, end, label), total / (end - start + 1)) });
     }
   }
   // Keep the most confident non-overlapping spans within a window.
   const selected = [];
-  for (const item of found.filter(s => text === undefined || admitModelSpan(s, text)).sort((a, b) => b.score - a.score)) if (!selected.some(s => item.start < s.end && item.end > s.start)) selected.push(item);
+  for (const item of found.filter(s => text === undefined || s.category === 'background' || admitModelSpan(s, text)).sort((a, b) => b.score - a.score)) if (!selected.some(s => item.start < s.end && item.end > s.start)) selected.push(item);
   return selected;
 }
 export async function loadModel(directory, categories, options = {}) {
   const tokenizer = new Tokenizer(JSON.parse(await readFile(path.join(directory, 'tokenizer.json'), 'utf8')), JSON.parse(await readFile(path.join(directory, 'tokenizer_config.json'), 'utf8')));
   const session = await createBackend(ort, path.join(directory, options.modelFile || 'model.onnx'), options);
-  const labels = Object.keys(LABELS).filter(label => categories.includes(LABELS[label]));
+  const primaryLabels = Object.fromEntries(Object.entries(LABELS).filter(([, category]) => categories.includes(category)));
   const encodedWords = new Map();
   const encode = value => {
     if (encodedWords.has(value)) return encodedWords.get(value);
@@ -39,13 +40,12 @@ export async function loadModel(directory, categories, options = {}) {
   };
   const special = tokenizer.encode('', { add_special_tokens: true }).ids;
   if (special.length !== 2 || special[0] !== 50281 || special[1] !== 50282) { await session.close(); throw Error('Local model tokenizer mismatch.'); }
-  const prompt = labels.flatMap(label => [...encode('<<ENT>>'), ...encode(label)]).concat(encode('<<SEP>>'));
-  // Leave room for context around fragments of unusually large words.
-  const wordBudget = Math.min(128, 512 - prompt.length - 2);
-  return {
-    get backend() { return session.provider; },
-    verify: session.verify,
-    async detect(text) {
+  function inference(labelCategories) {
+    const labels = Object.keys(labelCategories);
+    const prompt = labels.flatMap(label => [...encode('<<ENT>>'), ...encode(label)]).concat(encode('<<SEP>>'));
+    // Leave room for context around fragments of unusually large words.
+    const wordBudget = Math.min(128, 512 - prompt.length - 2);
+    return async text => {
       const tokens = encodeWords(text, encode, wordBudget); if (!tokens.length) return [];
       const found = new Map();
       // Token-budget windows with 32-word overlap: no truncation or skipped tail.
@@ -60,12 +60,23 @@ export async function loadModel(directory, categories, options = {}) {
         let output;
         try {
           output = await session.run(feeds);
-          for (const item of decode(output.logits, tokens.slice(first, last), labels, 0, text)) { const key = `${item.start}:${item.end}:${item.category}`; if (!found.has(key) || found.get(key).score < item.score) found.set(key, item); }
+          for (const item of decode(output.logits, tokens.slice(first, last), labels, 0, text, labelCategories)) { const key = `${item.start}:${item.end}:${item.category}`; if (!found.has(key) || found.get(key).score < item.score) found.set(key, item); }
         } finally { Object.values(feeds).forEach(t => t.dispose()); Object.values(output || {}).forEach(t => t.dispose()); }
         if (last === tokens.length) break;
         first = Math.max(first + 1, last - Math.min(32, Math.floor((last - first) / 2)));
       }
       return [...found.values()];
+    };
+  }
+  const primary = inference(primaryLabels);
+  const confirmation = inference({ ...primaryLabels, ...CONTRAST_LABELS });
+  return {
+    get backend() { return session.provider; },
+    verify: session.verify,
+    async detect(text) {
+      const spans = await primary(text);
+      if (!spans.some(span => needsCompanyConfirmation(span, text))) return spans;
+      return confirmCompanies(spans, await confirmation(text), text);
     },
     close: () => session.close()
   };

@@ -4,15 +4,20 @@ A local macOS app that exports work data through your signed-in Chrome tabs and 
 
 ## Local protection
 
-ActOut Collect Client helps users prepare business data for sharing by detecting and replacing sensitive information locally. The goal is to protect private details while preserving useful context. In our evaluation, **327 of 328 sensitive values were fully protected**, though some harmless content was also changed.
+ActOut Collect Client detects and replaces sensitive information locally so users can prepare business data for sharing while preserving useful context. It can still miss private details or change harmless text. Review the protected output before sharing.
 
-Results across **333 regression cases and 1,054 scored regions**, using GLiNER PII Edge v1.0 in FP32 on CPU at threshold 0.4:
+Results across the full **1,481-case regression dataset and 2,251 scored regions**, using GLiNER PII Edge v1.0 on CPU at threshold 0.4. Uncertain short-number cases are excluded.
 
-| Accuracy | Precision | Recall | F1 score | False-positive rate |
-| ---: | ---: | ---: | ---: | ---: |
-| 89.28% | 74.49% | 99.70% | 85.27% | 15.43% |
+| Metric | FP32 | UINT8 |
+| --- | ---: | ---: |
+| Accuracy | 77.48% | 84.50% |
+| Precision | 42.08% | 51.49% |
+| Recall | 98.38% | 97.84% |
+| F1 | 58.95% | 67.47% |
+| False-positive rate | 26.63% | 18.13% |
+| Fully protected sensitive values | 364 / 370 | 361 / 370 |
 
-Users should review the protected output before sharing.
+These test results do not estimate production accuracy. Recall counts any edit overlap; full protection requires covering the entire sensitive value. See [evaluation details](benchmarks/README.md).
 
 ## Setup
 
