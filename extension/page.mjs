@@ -14,7 +14,7 @@ export async function slackRead(path, body, expected) {
     const team = teams.find(t => t.id === teamId);
     const boots = [window.TS?.boot_data, window.boot_data].filter(Boolean);
     const boot = boots.find(b => b.api_token && (!b.team_id || b.team_id === teamId));
-    const observer = window.__agentsimSlackSession;
+    const observer = window.__actoutSlackSession;
     const token = observer?.getToken(teamId) || boot?.api_token || team?.token;
     if (typeof token !== 'string' || !token) fail('SESSION_UNAVAILABLE',
       `Slack session unavailable: storage=${storage}, teams=${teams.length}, selected=${!!team}, boot=${boots.length}, observer=${!!observer}, requests=${observer?.status().observed || 0}. Refresh Slack once, open a channel, then Connect.`);

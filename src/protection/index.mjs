@@ -139,7 +139,7 @@ export async function protectExport({ source, categories, signal, progress = () 
     if (generationMode === 'local-model') {
       await neural?.close?.(); // Release detector memory before loading the generator.
       if ([...detector.entries.values()].some(row => ['names','companies'].includes(row.category) && /\p{L}/u.test(row.original))) {
-        proposer ||= await createLocalProposer({ directory: modelDirectory && path.join(modelDirectory, 'replacement-runtime'), signal, log, preference: process.env.AGENTSIM_REPLACEMENT_BACKEND || 'auto', progress: event => progress({ ...event, files: files.length, totalFiles: files.length, values: detector.entries.size }) });
+        proposer ||= await createLocalProposer({ directory: modelDirectory && path.join(modelDirectory, 'replacement-runtime'), signal, log, preference: process.env.ACTOUT_REPLACEMENT_BACKEND || 'auto', progress: event => progress({ ...event, files: files.length, totalFiles: files.length, values: detector.entries.size }) });
       }
     }
     await detector.prepare({ proposer: generationMode === 'local-model' ? proposer : undefined, signal, log, progress: ({ completed, total }) => { progress({ phase: `Creating replacements ${completed}/${total}`, percent: 50, files: files.length, totalFiles: files.length, values: detector.entries.size }); } });

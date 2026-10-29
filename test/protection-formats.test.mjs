@@ -108,7 +108,7 @@ test('MIME attachment contents never reach detection or replacement, including t
   }
 });
 test('A failed format check removes the staged copy and leaves originals untouched', async t => {
-  const parent = await mkdtemp(path.join(os.tmpdir(), 'agentsim-format-')), source = path.join(parent, 'original');
+  const parent = await mkdtemp(path.join(os.tmpdir(), 'actout-format-')), source = path.join(parent, 'original');
   t.after(() => rm(parent, { recursive: true, force: true })); await mkdir(source);
   const xml = '<root><![CDATA[Alice]]></root>'; await writeFile(path.join(source, 'data.xml'), xml);
   const neural = { discover(_value, detector) { detector.spans = value => [{ start: 0, end: value.length, row: { replacement: ']]><broken>', occurrences: 0 } }]; }, close() {} };

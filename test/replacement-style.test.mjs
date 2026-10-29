@@ -105,7 +105,7 @@ test('Changing generator or spelling style invalidates the previous protected ex
   assert.ok(!protectionMatches(state, ['names'], { generationMode: 'local-model', namePreference: 'fr' }));
 });
 test('Real file pipeline preserves original/schema and records the model generation mode', async t => {
-  const parent = await mkdtemp('/tmp/agentsim-style-'); t.after(() => rm(parent, { recursive: true, force: true }));
+  const parent = await mkdtemp('/tmp/actout-style-'); t.after(() => rm(parent, { recursive: true, force: true }));
   const { mkdir } = await import('node:fs/promises'); const source = parent + '/input'; await mkdir(source);
   const input = '{ "full_name":"Zorvani Melqueth", "company":"Quorvex Labs Ltd.", "email":"zorvani.melqueth@gmail.com", "phone":"+972 54-123-4567", "count":42 }\n';
   await writeFile(source + '/data.json', input);
@@ -153,7 +153,7 @@ test('Long names use bounded model requests and preserve known components', asyn
 });
 
 test('Runtime failures and aborts still stop protection instead of generating fallback exports', async t => {
-  const parent = await mkdtemp('/tmp/agentsim-runtime-failure-'); t.after(() => rm(parent, { recursive: true, force: true }));
+  const parent = await mkdtemp('/tmp/actout-runtime-failure-'); t.after(() => rm(parent, { recursive: true, force: true }));
   const { mkdir } = await import('node:fs/promises'); const source = parent + '/input'; await mkdir(source);
   await writeFile(source + '/data.json', '{"full_name":"Alice Reed"}');
   await assert.rejects(protectExport({ source, categories: ['names'], generationMode: 'local-model', proposer: async () => { throw Error('Runtime failed'); } }), /Runtime failed/);

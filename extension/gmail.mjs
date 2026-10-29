@@ -5,8 +5,8 @@ export async function gmailRead(op, args, expected) {
   async function read() {
     const fail = (code, message) => { throw Object.assign(Error(message), { code }); };
     if (!document.querySelector('[role="main"]')) fail('LOGIN_REQUIRED', 'Sign in to Gmail and wait for the mailbox to load.');
-    const gmail = window.__agentsimGmailApi;
-    if (!gmail) fail('HELPER_FAILED', window.__agentsimGmailError || 'Gmail helper did not load. Reload the extension and refresh the Gmail tab, then reconnect.');
+    const gmail = window.__actoutGmailApi;
+    if (!gmail) fail('HELPER_FAILED', window.__actoutGmailError || 'Gmail helper did not load. Reload the extension and refresh the Gmail tab, then reconnect.');
     const validEmail = value => typeof value === 'string' && /^[^\s@<>]+@[^\s@<>]+$/.test(value);
     let account = window.GLOBALS?.[10];
     // Read only account UI, never arbitrary message text or the account switcher list.

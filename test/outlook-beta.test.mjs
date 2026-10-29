@@ -29,34 +29,34 @@ test('Beta is selectable and only Outlook.com personal mail is enabled', () => {
  assert.equal(catalog.filter(a=>a.id==='outlook').length,1);assert.equal(catalog.find(a=>a.id==='googledrive').maturity,'pending');
 });
 test('Observer binds authenticated self-profile and never exports credentials', async () => {
- const s=setup();await s.ready();const account=await s.target.__agentsimOutlook.read('identity');
+ const s=setup();await s.ready();const account=await s.target.__actoutOutlook.read('identity');
  assert.equal(account.email,'owner@example.test');assert.equal(account.authenticated,true);assert.ok(!JSON.stringify(account).includes('private-session'));
  assert.deepEqual(accountOwner('outlook',account).names,['Example Owner']);
- s.setAnswer(()=>response(fixture.folders)); const result=await s.target.__agentsimOutlook.read('outlook-folders',{offset:10},account);
+ s.setAnswer(()=>response(fixture.folders)); const result=await s.target.__actoutOutlook.read('outlook-folders',{offset:10},account);
  assert.equal(result.status,200);const call=s.calls.at(-1);const shape=JSON.parse(decodeURIComponent(call.init.headers['x-owa-urlpostdata']));
  assert.equal(shape.Body.Paging.Offset,10);assert.ok(shape.Body.FolderShape.AdditionalProperties.some(p=>p.FieldURI==='FolderClass'));
  assert.equal(call.init.headers.authorization,'Bearer private-session');assert.equal(call.init.redirect,'error');
- await assert.rejects(s.target.__agentsimOutlook.read('delete',{},account),{code:'OUTLOOK_ARGUMENT'});
- await assert.rejects(s.target.__agentsimOutlook.read('outlook-items',{folderId:'root'},null),{code:'LOGIN_REQUIRED'});
+ await assert.rejects(s.target.__actoutOutlook.read('delete',{},account),{code:'OUTLOOK_ARGUMENT'});
+ await assert.rejects(s.target.__actoutOutlook.read('outlook-items',{folderId:'root'},null),{code:'LOGIN_REQUIRED'});
 });
 test('Account switches and unverified identity responses cannot reuse connected state',async()=>{
- const s=setup();await s.ready();const old=await s.target.__agentsimOutlook.read('identity');
+ const s=setup();await s.ready();const old=await s.target.__actoutOutlook.read('identity');
  await s.observe('GetMailboxByIdentity',{Identity:{RawIdentity:'other@example.test'}},'PUID:other');await s.observe('FindFolder',folderRequest,'PUID:other');
- await assert.rejects(s.target.__agentsimOutlook.read('outlook-folders',{},old),{code:'ACCOUNT_CHANGED'});
- const failed=setup();failed.setAnswer(()=>response({WasSuccessful:false}));await failed.ready();await assert.rejects(failed.target.__agentsimOutlook.read('identity'),{code:'LOGIN_REQUIRED'});
+ await assert.rejects(s.target.__actoutOutlook.read('outlook-folders',{},old),{code:'ACCOUNT_CHANGED'});
+ const failed=setup();failed.setAnswer(()=>response({WasSuccessful:false}));await failed.ready();await assert.rejects(failed.target.__actoutOutlook.read('identity'),{code:'LOGIN_REQUIRED'});
 });
 test('Session expiry invalidates state and throttling is returned without response body',async()=>{
- const s=setup();await s.ready();const account=await s.target.__agentsimOutlook.read('identity');
- s.setAnswer(()=>new Response('private error',{status:429,headers:{'retry-after':'2'}}));assert.deepEqual(await s.target.__agentsimOutlook.read('outlook-items',{folderId:'inbox'},account),{status:429,retryAfter:'2'});
- s.setAnswer(()=>new Response('private error',{status:401}));await assert.rejects(s.target.__agentsimOutlook.read('outlook-items',{folderId:'inbox'},account),{code:'LOGIN_REQUIRED'});
- await assert.rejects(s.target.__agentsimOutlook.read('identity'),{code:'LOGIN_REQUIRED'});
+ const s=setup();await s.ready();const account=await s.target.__actoutOutlook.read('identity');
+ s.setAnswer(()=>new Response('private error',{status:429,headers:{'retry-after':'2'}}));assert.deepEqual(await s.target.__actoutOutlook.read('outlook-items',{folderId:'inbox'},account),{status:429,retryAfter:'2'});
+ s.setAnswer(()=>new Response('private error',{status:401}));await assert.rejects(s.target.__actoutOutlook.read('outlook-items',{folderId:'inbox'},account),{code:'LOGIN_REQUIRED'});
+ await assert.rejects(s.target.__actoutOutlook.read('identity'),{code:'LOGIN_REQUIRED'});
 });
 test('Oversized, cross-origin and mid-read account changes fail closed',async()=>{
- const s=setup();await s.ready();const account=await s.target.__agentsimOutlook.read('identity');
- s.setAnswer(()=>new Response('x',{headers:{'content-length':String(9*1024*1024)}}));await assert.rejects(s.target.__agentsimOutlook.read('outlook-folders',{},account),{code:'OUTLOOK_SIZE'});
- s.target.location=new URL('https://example.test/mail/');await assert.rejects(s.target.__agentsimOutlook.read('identity'),{code:'LOGIN_REQUIRED'});
- const m=setup();await m.ready();const old=await m.target.__agentsimOutlook.read('identity');let release;
- m.setAnswer(()=>new Promise(resolve=>{release=resolve;}));const inflight=m.target.__agentsimOutlook.read('outlook-folders',{},old);
+ const s=setup();await s.ready();const account=await s.target.__actoutOutlook.read('identity');
+ s.setAnswer(()=>new Response('x',{headers:{'content-length':String(9*1024*1024)}}));await assert.rejects(s.target.__actoutOutlook.read('outlook-folders',{},account),{code:'OUTLOOK_SIZE'});
+ s.target.location=new URL('https://example.test/mail/');await assert.rejects(s.target.__actoutOutlook.read('identity'),{code:'LOGIN_REQUIRED'});
+ const m=setup();await m.ready();const old=await m.target.__actoutOutlook.read('identity');let release;
+ m.setAnswer(()=>new Promise(resolve=>{release=resolve;}));const inflight=m.target.__actoutOutlook.read('outlook-folders',{},old);
  m.setAnswer(()=>response(identityData));await m.observe('GetMailboxByIdentity',{Identity:{RawIdentity:'new@example.test'}},'PUID:new');await m.observe('FindFolder',folderRequest,'PUID:new');release(response(fixture.folders));
  await assert.rejects(inflight,{code:'ACCOUNT_CHANGED'});
 });

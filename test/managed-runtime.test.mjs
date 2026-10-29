@@ -7,7 +7,7 @@ import { ensureAsset, runtimeTarget, validateArchivePaths, runtimeInventory } fr
 import { startGeneratorProcess } from '../src/protection/generator-process.mjs';
 const content = Buffer.from('a fixed synthetic model asset');
 const asset = { name: 'model.gguf', url: 'https://example.test/pinned-model', size: content.length, sha256: createHash('sha256').update(content).digest('hex') };
-async function temp(t) { const dir = await mkdtemp('/tmp/agentsim-runtime-test-'); t.after(() => rm(dir, { recursive: true, force: true })); return dir; }
+async function temp(t) { const dir = await mkdtemp('/tmp/actout-runtime-test-'); t.after(() => rm(dir, { recursive: true, force: true })); return dir; }
 const partial = dir => dir + '/' + asset.name + '.' + asset.sha256.slice(0,12) + '.partial';
 test('Verified asset installs automatically, uses private permissions and works offline on reuse', async t => {
   const dir = await temp(t); let requests = 0;

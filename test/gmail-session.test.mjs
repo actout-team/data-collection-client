@@ -7,7 +7,7 @@ import { slackRead } from '../extension/page.mjs';
 async function check({ email = null, title = 'Inbox - person@example.test - Gmail', main = true, helper = true, expected = null, fetchError = null, redirect = false, accountLabel = '' } = {}) {
   let probes = 0;
   const context = {
-    window: { GLOBALS: [,,,,,,,,,, email], __agentsimGmailApi: helper ? { ready: async () => {} } : null, __agentsimGmailError: helper ? null : 'Gmail helper could not initialize: fixture error' },
+    window: { GLOBALS: [,,,,,,,,,, email], __actoutGmailApi: helper ? { ready: async () => {} } : null, __actoutGmailError: helper ? null : 'Gmail helper could not initialize: fixture error' },
     document: { title, querySelector: selector => selector === '[role="main"]' && main ? {} : accountLabel && selector.includes('SignOutOptions') ? { getAttribute: () => accountLabel } : null },
     location: { origin: 'https://mail.google.com', pathname: '/mail/u/1/' }, URL, AbortSignal, expected,
     fetch: async () => { probes++; if (fetchError) throw Error(fetchError); return { ok: true, url: redirect ? 'https://accounts.google.com/login' : 'https://mail.google.com/mail/u/1/', body: { cancel: async () => {} } }; }
@@ -51,7 +51,7 @@ test('Slack page failures also survive serialization across the browser boundary
 test('Gmail format details survive serialized tab errors without leaking response values', async () => {
   const { parseSearch } = await import('../extension/gmail-api.mjs');
   const raw = JSON.stringify([0, null, { 'private@example.test': 'private-message-body' }]);
-  const context = { window: { GLOBALS: [,,,,,,,,,, 'person@example.test'], __agentsimGmailApi: {
+  const context = { window: { GLOBALS: [,,,,,,,,,, 'person@example.test'], __actoutGmailApi: {
     search: () => parseSearch(raw, 50)
   } }, document: { querySelector: () => ({}) } };
   const reply = await vm.runInNewContext(`(${gmailRead.toString()})('gmail-page', {}, null)`, context);
@@ -73,7 +73,7 @@ test('Gmail owner name comes only from the verified selected account control', a
 test('Retired Gmail MIME and attachment operations fail without making requests', async () => {
   for (const op of ['gmail-source', 'gmail-chunk', 'gmail-clear']) {
     const context = {
-      window: { GLOBALS: [,,,,,,,,,, 'person@example.test'], __agentsimGmailApi: {} },
+      window: { GLOBALS: [,,,,,,,,,, 'person@example.test'], __actoutGmailApi: {} },
       document: { querySelector: () => ({}) },
       fetch: () => assert.fail('Retired operations must not fetch attachment content.')
     };

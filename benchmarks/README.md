@@ -102,7 +102,7 @@ npm run benchmark:protection -- --precision float32 \
 ```
 
 Restore the private bundle into `.local/benchmark/private/`, or set
-`AGENTSIM_PRIVATE_BENCHMARK` to its directory. Set `AGENTSIM_TEST_MODEL_CACHE`
+`ACTOUT_PRIVATE_BENCHMARK` to its directory. Set `ACTOUT_TEST_MODEL_CACHE`
 to reuse a model cache. Models are checksum-pinned and downloaded on first use.
 Private fixtures, baselines and run reports are gitignored. CI only uploads
 public-control reports. Reports contain case/region IDs and counts, not source

@@ -1,7 +1,7 @@
 // Serialized into the selected MAIN world. Never return session headers.
 export async function outlookRead(op, args, expected) {
   try {
-    const api = window.__agentsimOutlook;
+    const api = window.__actoutOutlook;
     if (!api) throw Object.assign(Error('Refresh Outlook to activate the connector, then reconnect.'), { code: 'LOGIN_REQUIRED' });
     return { ok: true, value: await api.read(op, args, expected) };
   } catch (error) {

@@ -8,12 +8,24 @@ on:
 permissions:
   contents: read
 jobs:
+  desktop:
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --include=dev --ignore-scripts=false
+      - run: npm run build:extension
+      - run: node scripts/test-desktop.mjs
   benchmark:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
-      AGENTSIM_TEST_MODEL_CACHE: ${{ github.workspace }}/.model-cache
+      ACTOUT_TEST_MODEL_CACHE: ${{ github.workspace }}/.model-cache
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

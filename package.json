@@ -1,8 +1,8 @@
 {
-  "name": "agentsim-collect",
-  "version": "0.3.44",
+  "name": "actout-collect-client",
+  "version": "0.3.45",
   "description": "Local browser-session data export",
-  "author": "AgentSim",
+  "author": "ActOut",
   "license": "MIT",
   "type": "module",
   "main": "src/main.mjs",
@@ -26,8 +26,8 @@
     "electron-builder": "26.0.12"
   },
   "build": {
-    "appId": "com.agentsim.collect",
-    "productName": "AgentSim Collect",
+    "appId": "io.actout.collectclient",
+    "productName": "ActOut Collect Client",
     "files": [
       "src/**",
       "ui/**",

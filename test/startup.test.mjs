@@ -20,7 +20,7 @@ test('ESM entry finishes loading while Electron readiness is still pending', () 
       initializeImportMeta(meta) { meta.url = entry.href; }
     });
     await module.link(async specifier => {
-      const exports = specifier === 'electron' ? electron : await import(specifier.startsWith('node:') ? specifier : new URL(specifier, entry).href);
+      const exports = specifier === 'electron' ? electron : specifier === './app-settings.mjs' ? { configureApp() {} } : await import(specifier.startsWith('node:') ? specifier : new URL(specifier, entry).href);
       return new vm.SyntheticModule(Object.keys(exports), function () {
         for (const [name, value] of Object.entries(exports)) this.setExport(name, value);
       });

@@ -9,7 +9,7 @@ import { jsonText, emailText } from '../src/protection/formats.mjs';
 import { protectionOptions, protectionMatches } from '../ui/protection-options.mjs';
 const all = protectionOptions.map(o => o.id);
 async function fixture(t, files) {
-  const parent = await mkdtemp(path.join(os.tmpdir(), 'agentsim-protection-')), source = path.join(parent, 'download');
+  const parent = await mkdtemp(path.join(os.tmpdir(), 'actout-protection-')), source = path.join(parent, 'download');
   t.after(() => rm(parent, { recursive: true, force: true }));
   await mkdir(source);
   for (const [name, value] of Object.entries(files)) { await mkdir(path.dirname(path.join(source, name)), { recursive: true }); await writeFile(path.join(source, name), value); }

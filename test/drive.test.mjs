@@ -102,7 +102,7 @@ test('Compressed transfer length is not confused with decoded file length', asyn
   await downloads.clear(1);
 });
 async function collectFixture(t, pages, behavior = {}) {
-  const dir = await mkdtemp(path.join(os.tmpdir(), 'agentsim-drive-test-'));
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'actout-drive-test-'));
   t.after(() => rm(dir, { recursive: true, force: true }));
   const written = [], ops = [], stats = { messages: 0, warnings: [] }; let offset = 0;
   const ask = async task => {

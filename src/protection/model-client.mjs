@@ -5,7 +5,7 @@ import path from 'node:path';
 import { modelError } from './diagnostics.mjs';
 export async function startModelWorker({ directory, categories, preference, modelFile, signal, log = () => {}, workerURL = new URL('./model-worker.mjs', import.meta.url) }) {
   signal?.throwIfAborted();
-  const profileRoot = await mkdtemp(path.join(tmpdir(), 'agentsim-model-'));
+  const profileRoot = await mkdtemp(path.join(tmpdir(), 'actout-model-'));
   // Native GPU errors can abort a process. Keep them outside Electron's main process.
   const worker = fork(workerURL, [], { env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' }, execArgv: [], stdio: ['ignore', 'ignore', 'pipe', 'ipc'] });
   let pending, stopped, closing = false, backend, acceleration, stderr = '';

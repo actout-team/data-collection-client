@@ -1,6 +1,6 @@
 // Outlook.com Beta: observe this tab's web session. Secrets never cross the bridge.
 export function installOutlookSession(target = window, version = 'development') {
-  if (target.__agentsimOutlook) return;
+  if (target.__actoutOutlook) return;
   const origin = target.location.origin;
   const fail = (code, message) => { throw Object.assign(Error(message), { code }); };
   const validOrigin = () => origin === 'https://outlook.live.com' && target.location.origin === origin && /^\/mail(?:\/|$)/.test(target.location.pathname);
@@ -85,7 +85,7 @@ export function installOutlookSession(target = window, version = 'development') 
     check(bound); if (before !== generation) fail('ACCOUNT_CHANGED', 'Outlook account changed during a read.');
     return { status: 200, data };
   }
-  target.__agentsimOutlook = { version, async read(op, args = {}, expected) {
+  target.__actoutOutlook = { version, async read(op, args = {}, expected) {
     check(expected);
     if (op === 'identity') {
       const result = await request('GetMailboxByIdentity', identityTemplate, expected);

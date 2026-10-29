@@ -3,17 +3,17 @@ export const observers = {
   gmail: {
     name: 'Gmail', id: 'gmail-api', matches: ['https://mail.google.com/*'],
     source: 'gmail-api.mjs', bundle: 'gmail-bundle.js', install: 'installGmailApi',
-    property: '__agentsimGmailApi', errorProperty: '__agentsimGmailError'
+    property: '__actoutGmailApi', errorProperty: '__actoutGmailError'
   },
   slack: {
     name: 'Slack', id: 'slack-session', matches: ['https://*.slack.com/*'],
     source: 'slack-session.mjs', bundle: 'slack-bundle.js', install: 'installSlackSession',
-    property: '__agentsimSlackSession'
+    property: '__actoutSlackSession'
   },
   outlook: {
     name: 'Outlook', id: 'outlook-session', matches: ['https://outlook.live.com/*'],
     source: 'outlook-session.mjs', bundle: 'outlook-bundle.js', install: 'installOutlookSession',
-    property: '__agentsimOutlook'
+    property: '__actoutOutlook'
   }
 };
 

@@ -43,14 +43,14 @@ test('Every model window is bounded, overlaps its neighbors and includes the tai
   assert.deepEqual([...textWindows('A literal <value> in parsed text')], ['A literal <value> in parsed text']);
 });
 test('Model downloads are fixed public assets; invalid bytes fail integrity and clean partial files', async t => {
-  const root=await mkdtemp('/tmp/agentsim-model-download-test-');t.after(()=>rm(root,{recursive:true,force:true}));
+  const root=await mkdtemp('/tmp/actout-model-download-test-');t.after(()=>rm(root,{recursive:true,force:true}));
   const requests=[];
   await assert.rejects(ensureModel(root,{fetchModel:async url=>{requests.push(url);return new Response('invalid model');}}),/integrity/);
   assert.deepEqual(requests,[`https://huggingface.co/${MODEL.id}/resolve/${MODEL.revision}/onnx/model_quint8.onnx`]);
   assert.deepEqual(await readdir(`${root}/${MODEL.revision}`),[]);
 });
 test('Aborted model setup makes no download request', async t => {
-  const root=await mkdtemp('/tmp/agentsim-model-abort-test-');t.after(()=>rm(root,{recursive:true,force:true}));
+  const root=await mkdtemp('/tmp/actout-model-abort-test-');t.after(()=>rm(root,{recursive:true,force:true}));
   const c=new AbortController();c.abort(Error('stop'));
   await assert.rejects(ensureModel(root,{signal:c.signal,fetchModel:async()=>{throw Error('must not fetch');}}),/stop/);
 });

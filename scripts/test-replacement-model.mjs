@@ -4,8 +4,8 @@ import { startGeneratorProcess } from '../src/protection/generator-process.mjs';
 import { createDetector } from '../src/protection/detect.mjs';
 import path from 'node:path';
 import os from 'node:os';
-const directory = process.env.AGENTSIM_TEST_REPLACEMENT_CACHE || path.join(os.tmpdir(), 'agentsim-replacement-model');
-const proposer = await createLocalProposer({ directory, start: async (config, options) => { const runtime = await startGeneratorProcess(config, options); if (process.env.AGENTSIM_TEST_TRACE === '1') { const generate = runtime.generate; runtime.generate = async body => { const result = await generate(body); console.log('Synthetic-test response:', JSON.stringify(result)); return result; }; } return runtime; }, preference: process.env.AGENTSIM_REPLACEMENT_BACKEND || 'auto', log: (level, message) => console.log(level, message), progress: e => { if (!e.phase.includes('MB')) console.log(e.phase); } });
+const directory = process.env.ACTOUT_TEST_REPLACEMENT_CACHE || path.join(os.tmpdir(), 'actout-replacement-model');
+const proposer = await createLocalProposer({ directory, start: async (config, options) => { const runtime = await startGeneratorProcess(config, options); if (process.env.ACTOUT_TEST_TRACE === '1') { const generate = runtime.generate; runtime.generate = async body => { const result = await generate(body); console.log('Synthetic-test response:', JSON.stringify(result)); return result; }; } return runtime; }, preference: process.env.ACTOUT_REPLACEMENT_BACKEND || 'auto', log: (level, message) => console.log(level, message), progress: e => { if (!e.phase.includes('MB')) console.log(e.phase); } });
 try {
   console.log(JSON.stringify(proposer.info));
   const detector = createDetector(['names','companies','emails']);

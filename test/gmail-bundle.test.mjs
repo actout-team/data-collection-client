@@ -12,9 +12,9 @@ test('Built classic content script installs once at document start without page 
   const window = { XMLHttpRequest: XHR, location: { pathname: '/mail/u/0/' }, fetch: async () => {} };
   const context = vm.createContext({ window, URL, Headers, TextDecoder, AbortSignal });
   vm.runInContext(source, context);
-  assert.equal(typeof window.__agentsimGmailApi.search, 'function');
-  const api = window.__agentsimGmailApi, fetch = window.fetch;
+  assert.equal(typeof window.__actoutGmailApi.search, 'function');
+  const api = window.__actoutGmailApi, fetch = window.fetch;
   vm.runInContext(source, context);
-  assert.equal(window.__agentsimGmailApi, api); assert.equal(window.fetch, fetch);
-  assert.equal(window.__agentsimGmailError, null);
+  assert.equal(window.__actoutGmailApi, api); assert.equal(window.fetch, fetch);
+  assert.equal(window.__actoutGmailError, null);
 });

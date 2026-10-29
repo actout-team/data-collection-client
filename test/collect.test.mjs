@@ -104,7 +104,7 @@ for (const kind of ['old-only', 'mixed', 'empty', 'invalid']) {
   });
 }
 async function fixture(t) {
-  const dir = await mkdtemp(path.join(os.tmpdir(), 'agentsim-test-'));
+  const dir = await mkdtemp(path.join(os.tmpdir(), 'actout-test-'));
   t.after(() => rm(dir, { recursive: true, force: true }));
   return dir;
 }

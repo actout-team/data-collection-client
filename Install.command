@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -euo pipefail
 
 # Keep Finder-launched failures visible in Terminal.
 finish() {
@@ -25,11 +25,13 @@ cd -P -- "$project_dir" || fail "Cannot open the project folder. $folder_help"
 [[ -r package.json && -r package-lock.json ]] || fail "Cannot read the project files. Extract the complete source ZIP first. $folder_help"
 
 command -v node >/dev/null 2>&1 || fail 'Node.js 24 or newer is required. Install it from https://nodejs.org, reopen Terminal, and retry.'
-node -e 'process.cwd()' 2>/dev/null || fail "Node cannot access the project folder. $folder_help"
+node -e 'process.cwd()' || fail "Node could not verify the project folder. Check the error above. $folder_help"
 node -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 24 ? 0 : 1)' || fail 'Node.js 24 or newer is required. Update Node, reopen Terminal, and retry.'
 command -v npm >/dev/null 2>&1 || fail 'npm is missing. Reinstall Node.js with npm, reopen Terminal, and retry.'
 
+printf '\nActOut Collect Client\nProject: %s\nChrome extension: %s/extension\n\n' "$PWD" "$PWD"
 printf 'Installing dependencies...\n'
-npm ci || fail 'Dependency installation failed. Resolve the npm error above, then reopen Install.command. The app was not started.'
-printf '\nStarting the client...\n'
-npm start
+# Electron is a development dependency and needs its binary install script.
+npm ci --include=dev --ignore-scripts=false || fail 'Dependency installation failed. Copy the npm error above when requesting help. The app was not started.'
+printf '\nStarting ActOut Collect Client...\n'
+npm start || fail 'ActOut Collect Client could not start. Copy the error above when requesting help.'

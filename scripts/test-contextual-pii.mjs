@@ -19,9 +19,9 @@ const cases = [
   { text: 'Contact details for Alice Reed: please reply.', value: 'Alice Reed', category: 'names' },
   { text: 'Alice Reed works at Cedar Valley Analytics.', value: 'Cedar Valley Analytics', category: 'companies' }
 ];
-const directory = process.env.AGENTSIM_TEST_MODEL_CACHE || path.join(tmpdir(), 'agentsim-neural-cache');
-const neural = await createNeural({ directory, categories, preference: process.env.AGENTSIM_TEST_BACKEND || 'cpu' });
-const temporary = await mkdtemp(path.join(tmpdir(), 'agentsim-contextual-pii-'));
+const directory = process.env.ACTOUT_TEST_MODEL_CACHE || path.join(tmpdir(), 'actout-neural-cache');
+const neural = await createNeural({ directory, categories, preference: process.env.ACTOUT_TEST_BACKEND || 'cpu' });
+const temporary = await mkdtemp(path.join(tmpdir(), 'actout-contextual-pii-'));
 try {
   // No field lookup, credential regex, or deterministic discovery is invoked.
   for (const fixture of cases) {

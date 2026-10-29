@@ -1,6 +1,6 @@
 // Observe Slack API authentication, including workspace-subdomain requests. No message bodies are kept.
 export function installSlackSession(target = window, version = 'development') {
-  if (target.__agentsimSlackSession) return;
+  if (target.__actoutSlackSession) return;
   const workspace = () => target.location.pathname.match(/^\/client\/(T[A-Z0-9]+)(?:\/|$)/)?.[1];
   let token, team, transport, observed = 0;
   const tracked = new WeakMap();
@@ -46,7 +46,7 @@ export function installSlackSession(target = window, version = 'development') {
     const entry = tracked.get(this); if (entry) capture(entry.url, body, entry.headers);
     return send.apply(this, arguments);
   };
-  target.__agentsimSlackSession = {
+  target.__actoutSlackSession = {
     version,
     // Called only inside the tab by slackRead, never returned across the bridge.
     getToken: requested => requested === team && requested === workspace() ? token : undefined,

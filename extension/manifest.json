@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "AgentSim Local Bridge",
-  "version": "0.3.44",
-  "description": "Connect selected business apps to the local AgentSim collector. Cookies stay in your browser.",
+  "name": "ActOut Collect Client Bridge",
+  "version": "0.3.45",
+  "description": "Connect selected business apps to the local ActOut collector. Cookies stay in your browser.",
   "permissions": [
     "cookies",
     "scripting",
@@ -38,7 +38,7 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Open AgentSim Local Bridge"
+    "default_title": "Open ActOut Collect Client Bridge"
   },
   "options_ui": {
     "page": "popup.html",

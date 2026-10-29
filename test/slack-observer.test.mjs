@@ -23,8 +23,8 @@ for (const transport of ['fetch-form', 'xhr-json', 'xhr-multipart', 'fetch-heade
       const form = new FormData(); form.set('token', 'xoxc-fixture');
       assert.equal(xhr.send(transport === 'xhr-json' ? JSON.stringify({ token: 'xoxc-fixture' }) : form), 'sent');
     }
-    assert.equal(target.__agentsimSlackSession.getToken('T123'), 'xoxc-fixture');
-    assert.equal(JSON.stringify(target.__agentsimSlackSession.status()).includes('xoxc'), false);
+    assert.equal(target.__actoutSlackSession.getToken('T123'), 'xoxc-fixture');
+    assert.equal(JSON.stringify(target.__actoutSlackSession.status()).includes('xoxc'), false);
     const context = { window: target, location: target.location, localStorage: { getItem: () => '{}' }, fetch: target.fetch, URL, FormData, URLSearchParams, AbortSignal };
     const reply = await vm.runInNewContext(`(${slackRead.toString()})('/api/auth.test', {}, null)`, context);
     assert.equal(reply.ok, true); assert.equal(reply.value.data.team_id, 'T123');
@@ -35,15 +35,15 @@ test('Slack observer ignores other origins, workspaces, and non-API traffic', as
   const { target } = fixture();
   for (const [url, team] of [['https://example.test/api/client.boot', 'T123'], ['/api/client.boot', 'TOTHER'], ['/messages', 'T123']]) {
     await target.fetch(url, { body: JSON.stringify({ token: 'xoxc-private', team_id: team }) });
-    assert.equal(target.__agentsimSlackSession.getToken('T123'), undefined);
+    assert.equal(target.__actoutSlackSession.getToken('T123'), undefined);
   }
   await target.fetch('/api/client.boot', { body: 'token=xoxc-fixture' });
   target.location.pathname = '/client/TOTHER';
-  assert.equal(target.__agentsimSlackSession.getToken('TOTHER'), undefined);
-  assert.equal(target.__agentsimSlackSession.getToken('T123'), undefined);
+  assert.equal(target.__actoutSlackSession.getToken('TOTHER'), undefined);
+  assert.equal(target.__actoutSlackSession.getToken('T123'), undefined);
 });
 test('Built Slack observer installs at document start without DOM or duplicate hooks', async () => {
-  const { target } = fixture(); delete target.__agentsimSlackSession;
+  const { target } = fixture(); delete target.__actoutSlackSession;
   const source = await readFile(new URL('../extension/slack-bundle.js', import.meta.url), 'utf8');
   const context = vm.createContext({ window: target, URL, Headers, URLSearchParams, FormData });
   vm.runInContext(source, context); const fetch = target.fetch;
@@ -63,5 +63,5 @@ test('Observed workspace-domain multipart routing is preserved for real-style AP
   assert.equal(calls[0].options.credentials, 'include');
   assert.equal(calls[0].options.body.get('_x_sonic'), 'true');
   assert.equal(calls[0].options.body.get('text'), null);
-  assert.equal(JSON.stringify(target.__agentsimSlackSession.getTransport('T123')).includes('private'), false);
+  assert.equal(JSON.stringify(target.__actoutSlackSession.getTransport('T123')).includes('private'), false);
 });

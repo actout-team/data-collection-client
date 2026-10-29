@@ -95,7 +95,7 @@ test('Full serialized tab-to-disk flow collects two API pages and readable bodie
   const { gmailRead } = await import('../extension/gmail.mjs');
   const { collectGmail } = await import('../src/connectors/gmail.mjs');
   const { createWriter } = await import('../src/export.mjs');
-  const dir = await mkdtemp(path.join(tmpdir(), 'agentsim-api-e2e-'));
+  const dir = await mkdtemp(path.join(tmpdir(), 'actout-api-e2e-'));
   t.after(() => rm(dir, { recursive: true, force: true }));
   const offsets = [], methods = [];
   class XHR { open() {} setRequestHeader() {} }
@@ -120,7 +120,7 @@ test('Full serialized tab-to-disk flow collects two API pages and readable bodie
   installGmailApi(target);
   const xhr = new target.XMLHttpRequest(); xhr.open('POST', '/sync/u/1/i/bv');
   xhr.setRequestHeader('X-Framework-Xsrf-Token', 'fixture'); xhr.setRequestHeader('X-Gmail-BTAI', 'fixture');
-  t.after(() => clearTimeout(target.__agentsimSourceTimer));
+  t.after(() => clearTimeout(target.__actoutSourceTimer));
   const context = vm.createContext({ window: target, document: { querySelector: () => ({}) }, location, fetch: target.fetch,
     URL, URLSearchParams, AbortSignal, TextDecoder, Uint8Array, setTimeout, clearTimeout, btoa });
   const ask = async task => {

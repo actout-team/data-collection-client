@@ -80,7 +80,7 @@ function parseThreadPayload(raw, expectedId) {
   return { messages, allIds };
 }
 export function installGmailApi(target = window, version = 'development') {
-  if (target.__agentsimGmailApi) return target.__agentsimGmailApi;
+  if (target.__actoutGmailApi) return target.__actoutGmailApi;
   const headers = {}, tracked = new WeakMap();
   const account = target.location.pathname.match(/^\/mail(\/u\/\d+)\//)?.[1];
   if (!account) return;
@@ -149,6 +149,6 @@ export function installGmailApi(target = window, version = 'development') {
       return parseThread(await request('fd', [[[id, 1]], 2]), id);
     }
   };
-  target.__agentsimGmailApi = api;
+  target.__actoutGmailApi = api;
   return api;
 }

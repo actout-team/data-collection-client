@@ -7,12 +7,12 @@ import { preferredProvider, createBackend } from '../src/protection/model-backen
 import { modelError } from '../src/protection/diagnostics.mjs';
 import { protectExport } from '../src/protection/index.mjs';
 async function workerFixture(t, code) {
-  const root = await mkdtemp('/tmp/agentsim-worker-test-'); t.after(() => rm(root, {recursive:true,force:true}));
+  const root = await mkdtemp('/tmp/actout-worker-test-'); t.after(() => rm(root, {recursive:true,force:true}));
   await writeFile(root+'/worker.mjs',code); return pathToFileURL(root+'/worker.mjs');
 }
 test('Worker import failures preserve the missing package and remediation',async t=>{
-  const workerURL=await workerFixture(t,"import 'agentsim-missing-runtime-dependency';");
-  await assert.rejects(startModelWorker({workerURL}),error=>error.message.includes('ERR_MODULE_NOT_FOUND') && error.message.includes('agentsim-missing-runtime-dependency') && error.message.includes('npm install'));
+  const workerURL=await workerFixture(t,"import 'actout-missing-runtime-dependency';");
+  await assert.rejects(startModelWorker({workerURL}),error=>error.message.includes('ERR_MODULE_NOT_FOUND') && error.message.includes('actout-missing-runtime-dependency') && error.message.includes('npm install'));
 });
 test('Unexpected worker exit is reported with its exit code',async t=>{
   const workerURL=await workerFixture(t,'process.exit(17)');
@@ -27,7 +27,7 @@ test('Worker log messages cannot accidentally resolve startup or inference reque
   try {assert.equal(worker.backend,'coreml');assert.equal((await worker.detect('Sam'))[0].category,'names');assert.equal(logs.length,2);} finally {await worker.close();}
 });
 test('Model errors fail protection without a rules-only copy or source changes',async t=>{
-  const parent=await mkdtemp('/tmp/agentsim-model-fail-');t.after(()=>rm(parent,{recursive:true,force:true}));
+  const parent=await mkdtemp('/tmp/actout-model-fail-');t.after(()=>rm(parent,{recursive:true,force:true}));
   const source=parent+'/source';await mkdir(source);await writeFile(source+'/data.txt','private@example.com');
   const logs=[];let closed=false;
   await assert.rejects(protectExport({source,categories:['emails'],log:(level,message)=>logs.push(message),neural:{info:{backendLabel:'CPU'},discover:async()=>{throw Error('Synthetic inference failure');},close:async()=>{closed=true;}}}),/Synthetic inference failure/);

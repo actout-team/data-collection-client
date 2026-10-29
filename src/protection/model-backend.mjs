@@ -21,7 +21,7 @@ export async function createBackend(ort, modelPath, { preference = 'auto', log =
   }).map(item => item.name);
   const provider = preferredProvider(platform, available, preference);
   log('info', `Installed backends: ${available.join(', ')}. Selected: ${backendLabel(provider)}.`);
-  const profile = provider === 'cpu' ? null : await mkdtemp(path.join(profileRoot, 'agentsim-gpu-check-'));
+  const profile = provider === 'cpu' ? null : await mkdtemp(path.join(profileRoot, 'actout-gpu-check-'));
   const options = name => ({
     executionProviders: name === 'cpu' ? ['cpu'] : [name === 'webgpu' ? { name } : { name, deviceId: 0 }, 'cpu'],
     intraOpNumThreads: Math.min(4, availableParallelism()), interOpNumThreads: 1,

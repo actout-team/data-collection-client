@@ -12,8 +12,10 @@ import { createBridge } from './bridge.mjs';
 import { createWriter, downloadStatus, jsonFile, pause, slackApi, daysBackWindow } from './export.mjs';
 import { createProgress } from './progress.mjs';
 import { createLog } from './log.mjs';
+import { configureApp } from './app-settings.mjs';
 
 process.umask(0o077);
+configureApp(app);
 const root = fileURLToPath(new URL('..', import.meta.url));
 const extensionFolder = app.isPackaged ? path.join(process.resourcesPath, 'chrome-extension') : path.join(root, 'extension');
 const activity = createLog();
@@ -45,7 +47,7 @@ async function connect(id, hint) {
     while (Date.now() < deadline) {
       signal.throwIfAborted();
       const found = await bridge.ask({ app: id, op: 'locate', hint, open: true }, signal);
-      if (found.version !== app.getVersion()) throw Error(`Extension ${found.version || 'older build'} differs from desktop ${app.getVersion()}. In chrome://extensions reload AgentSim Local Bridge from the folder shown in Connect work browser, then retry Connect.`);
+      if (found.version !== app.getVersion()) throw Error(`Extension ${found.version || 'older build'} differs from desktop ${app.getVersion()}. In chrome://extensions reload ActOut Collect Client Bridge from the folder shown in Connect work browser, then retry Connect.`);
       if (found.choices) {
         log('info', id, 'Choose the browser tab in the account popup, even if only one is open.');
         state.apps[id] = { status: 'Choose the mailbox or workspace to connect.', choices: found.choices };
@@ -135,7 +137,7 @@ async function protect({ categories, namePreference = 'auto', generationMode = '
   state.protectionResult = null;
   state.protection = { phase: 'Scanning', percent: 0, files: 0, totalFiles: 0, values: 0 };
   try {
-    state.protectionResult = await protectExport({ source: download.output, accountOwners: download.owners || [], categories, namePreference, generationMode, preference: process.env.AGENTSIM_PROTECTION_BACKEND || 'auto', log: (level, message) => log(level, 'protection', message), modelDirectory: path.join(app.getPath('userData'), 'protection-model'), signal, progress: update => { state.protection = update; progress(`${update.phase} · ${update.percent}%`); } });
+    state.protectionResult = await protectExport({ source: download.output, accountOwners: download.owners || [], categories, namePreference, generationMode, preference: process.env.ACTOUT_PROTECTION_BACKEND || 'auto', log: (level, message) => log(level, 'protection', message), modelDirectory: path.join(app.getPath('userData'), 'protection-model'), signal, progress: update => { state.protection = update; progress(`${update.phase} · ${update.percent}%`); } });
     state.output = state.protectionResult.output;
     const result = state.protectionResult;
     log(result.status === 'partial' ? 'warn' : 'info', 'protection', `${result.files} files copied; ${result.values} mapped values; ${result.replacements} replacements. ${result.reviewItems} items need review. Original files unchanged.`);
@@ -152,17 +154,17 @@ if (!app.requestSingleInstanceLock()) app.quit();
 else {
   app.on('second-instance', () => { win?.show(); win?.focus(); });
   app.whenReady().then(start).catch(error => {
-    console.error('AgentSim Collect could not start:', error);
+    console.error('ActOut Collect Client could not start:', error);
     log('error', 'app', error.message);
-    dialog.showErrorBox('AgentSim Collect could not start', error.message);
+    dialog.showErrorBox('ActOut Collect Client could not start', error.message);
     app.exit(1);
   });
 }
 
 async function start() {
-  console.info('AgentSim Collect: opening window…');
-  activity.add('info', 'app', `AgentSim Collect ${app.getVersion()} starting.`);
-  outputParent = app.isPackaged ? path.join(app.getPath('downloads'), 'AgentSim Collect') : path.join(root, 'downloads');
+  console.info('ActOut Collect Client: opening window…');
+  activity.add('info', 'app', `ActOut Collect Client ${app.getVersion()} starting.`);
+  outputParent = app.isPackaged ? path.join(app.getPath('downloads'), 'ActOut Collect Client') : path.join(root, 'downloads');
   estimateFile = path.join(app.getPath('userData'), 'estimates.json');
   try { const saved = JSON.parse(await readFile(estimateFile, 'utf8')); if (saved && typeof saved === 'object' && !Array.isArray(saved)) estimateHistory = saved; } catch { /* First run: learn from current records. */ }
   const pairFile = path.join(app.getPath('userData'), 'bridge.private.json');
@@ -180,7 +182,7 @@ async function start() {
       pairing, onEvent: log,
       approve: async origin => {
         win.show(); win.focus();
-        const result = await dialog.showMessageBox(win, { type: 'question', title: 'Pair Chrome', message: 'Allow this Chrome extension to connect?', detail: `Only approve immediately after clicking Pair in AgentSim Local Bridge.\nExtension ID: ${origin.split('://')[1]}\nIt can send data from the apps you select to this computer. Experimental apps capture API responses while you browse.`, buttons: ['Cancel', 'Pair'], defaultId: 0, cancelId: 0 });
+        const result = await dialog.showMessageBox(win, { type: 'question', title: 'Pair Chrome', message: 'Allow this Chrome extension to connect?', detail: `Only approve immediately after clicking Pair in ActOut Collect Client Bridge.\nExtension ID: ${origin.split('://')[1]}\nIt can send data from the apps you select to this computer. Experimental apps capture API responses while you browse.`, buttons: ['Cancel', 'Pair'], defaultId: 0, cancelId: 0 });
         return result.response === 1;
       },
       savePairing: async value => {
@@ -219,7 +221,7 @@ async function start() {
     } catch (error) { log('error', 'app', error.message); progress(error.message); return { error: error.message }; }
   });
   await win.loadFile(path.join(root, 'ui/index.html'));
-  console.info('AgentSim Collect: window loaded.');
+  console.info('ActOut Collect Client: window loaded.');
   log('info', 'app', 'Window loaded. Waiting for the Chrome extension.');
   let browserConnected = false;
   const heartbeat = setInterval(() => {

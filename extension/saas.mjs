@@ -6,7 +6,7 @@ export function saasRead(op, config, expected) {
   const account = scope();
   if (!account || /\/(login|signin|sign-in)(\/|$)/i.test(location.pathname)) return fail('Open a signed-in app page, then reconnect.', 'LOGIN_REQUIRED');
   const origin = location.origin;
-  let helper = window.__agentsimSaasCapture;
+  let helper = window.__actoutSaasCapture;
   if (op === 'identity' && !expected) {
     if (helper && helper.version !== config.version) return fail('Refresh the app tab to load the updated capture helper.');
     if (!helper) {
@@ -95,7 +95,7 @@ export function saasRead(op, config, expected) {
         read(index) { return records[index]; },
         clear() { active = false; generation++; records = []; bytes = 0; }
       };
-      Object.defineProperty(window, '__agentsimSaasCapture', { value: helper, configurable: true });
+      Object.defineProperty(window, '__actoutSaasCapture', { value: helper, configurable: true });
     }
     helper.start();
   }
