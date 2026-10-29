@@ -3,6 +3,12 @@ import { MODEL, LABELS } from './model-config.mjs';
 // These rules do not gate contextual model predictions.
 export const credentialPattern = /\b(?:xox[baprsco]-[A-Za-z0-9-]{8,}|sk-[A-Za-z0-9_-]{16,}|AKIA[A-Z0-9]{16}|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)\b|-----BEGIN (?:[A-Z ]*PRIVATE KEY)-----[\s\S]+?-----END (?:[A-Z ]*PRIVATE KEY)-----/g;
 const labelOnly = /^(?:password|passwd|pwd|secret|token|api[ _-]?key|email|e-mail|name|first|last|ssn|ein|iban|passport|account|number|address|phone|signature|unsubscribe|click|here|login|sign[ -]?in|privacy|policy|help|support)$/i;
+const codeLabel = '(?:verification|confirmation|security|authentication|log[ -]?in|sign[ -]?in|one[ -]time|two[ -]factor) code';
+const codeValue = '(?<![\\w.-])([0-9]{4,8})(?![\\w-]|\\.\\d)';
+const codePatterns = [
+  new RegExp(`\\b${codeLabel}\\s*(?::|=|\\bis\\b)\\s*${codeValue}`, 'gi'),
+  new RegExp(`${codeValue}\\s+is your (?:[\\p{L}\\p{N}][\\p{L}\\p{N}.-]* ){0,4}${codeLabel}\\b`, 'giu')
+];
 export function plausibleCredential(value, { explicit = false } = {}) {
   const label = value?.replace(/[.!?]+$/, '');
   if (!value?.trim() || labelOnly.test(label) || /^(?:reset|expired|incorrect|invalid|required|protected|changed|encrypted|missing|none|null|undefined|true|false|redacted|hidden|not|the|your|a|an)$/i.test(label)) return false;
@@ -22,7 +28,17 @@ export function credentialAssignments(text) {
   for (const match of text.matchAll(/\b(?:Bearer|Basic)\s+([A-Za-z0-9+\/_=.-]{8,})/gi)) {
     const start = match.index + match[0].indexOf(match[1]); found.push({ start, end: start + match[1].length });
   }
-  return found;
+  // Numeric codes need explicit authentication context, never digit shape alone.
+  for (const pattern of codePatterns) for (const match of text.matchAll(pattern)) {
+    const start = match.index + match[0].indexOf(match[1]); found.push({ start, end: start + match[1].length });
+  }
+  // Several rules can recognize the same value. The router requires disjoint,
+  // source-ordered ranges before splitting prose around credential assignments.
+  let end = -1;
+  return found.sort((a, b) => a.start - b.start || b.end - a.end).filter(range => {
+    if (range.start < end) return false;
+    end = range.end; return true;
+  });
 }
 // Semantic classification belongs to the model. Do not veto a prediction
 // because its value lacks an English keyword, prefix, or hand-written shape.

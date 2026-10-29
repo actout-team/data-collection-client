@@ -114,3 +114,25 @@ test('A public brand homonym in a sensitive street address does not exempt the a
   assert.ok(out.text.includes(d.entries.get('123 Apple Street').replacement));
   assert.ok(out.text.endsWith('Apple released a product.'));
 });
+
+test('Public service labels survive field rules and model spans without exempting people or unknown companies', () => {
+  const source = JSON.stringify({ from: { name: 'The Google Workspace Team', address: 'updates@google.com' },
+    contacts: [{ name: 'Microsoft Billing Alerts' }, { name: 'Alice at Google' }, { name: 'Private Venture Team' }],
+    first_name: 'Miro', password: 'Google Payments', text: 'Verification code: 482716' });
+  const d = createDetector(['names', 'companies', 'emails', 'secrets']);
+  jsonText(source, d, 'discover');
+  d.add('Workspace Team', 'names', { source: 'model' }, 'The Google Workspace Team');
+  d.add('Billing Alerts', 'companies', { source: 'model' }, 'Microsoft Billing Alerts');
+  d.compile();
+  const out = JSON.parse(jsonText(source, d, 'replace'));
+  assert.equal(out.from.name, 'The Google Workspace Team');
+  assert.notEqual(out.from.address, 'updates@google.com');
+  assert.equal(out.contacts[0].name, 'Microsoft Billing Alerts');
+  assert.notEqual(out.contacts[1].name, 'Alice at Google');
+  assert.ok(out.contacts[1].name.endsWith(' at Google'));
+  assert.notEqual(out.contacts[2].name, 'Private Venture Team');
+  assert.notEqual(out.first_name, 'Miro');
+  assert.notEqual(out.password, 'Google Payments');
+  assert.ok(!out.text.includes('482716'));
+  for (const value of ['Alice Google', 'Google Partners LLC', 'Google Smith', 'Google support@private.example', 'Google TeamCloud']) assert.equal(publicEntities.isEntity(value), false, value);
+});

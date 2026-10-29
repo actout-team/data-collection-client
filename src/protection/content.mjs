@@ -8,6 +8,9 @@ import { credentialAssignments } from './entity-quality.mjs';
 // Preserve the credential label's meaning without sending schema text to the
 // detector. The surrounding prose still follows the normal structure router.
 export function assignedText(text, ranges, detector, mode, key, context, warn, onEdits, depth) {
+  if (mode === 'discover') for (const { start, end } of ranges) {
+    detector.add(text.slice(start, end), 'secrets', { source: 'field-or-rule' }, text);
+  }
   const scan = () => {
     const changes = [];
     let cursor = 0;

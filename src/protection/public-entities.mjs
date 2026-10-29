@@ -5,7 +5,7 @@ import { publicMailDomains } from './value-shapes.mjs';
 // exports or from model confidence. Keep short/common aliases out (e.g. X, MS).
 // Registry updates ship with the app. Custom registries can extend this policy
 // through createPublicEntityPolicy; no network lookup or model approval is used.
-export const PUBLIC_ENTITY_VERSION = '2026-10-16.1';
+export const PUBLIC_ENTITY_VERSION = '2026-10-29.1';
 const registry = [
   ['Google|Google Workspace|Google Cloud|Google Drive|Google Docs|Google Sheets|Google Calendar|Google Meet|Gmail|YouTube|Android|Chrome', 'google.com google.co.il googlemail.com gmail.com googleapis.com gstatic.com youtube.com youtu.be android.com chromium.org'],
   ['Apple|Apple Inc.|iCloud|iPhone|iPad|MacBook|macOS|App Store', 'apple.com icloud.com me.com mac.com'],
@@ -57,6 +57,16 @@ const escape = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const normalize = value => value.normalize('NFKC').toLowerCase();
 const legal = '(?:[ ,]+(?:Inc\\.?|Incorporated|LLC|Ltd\\.?|Limited|Corp\\.?|Corporation|PLC|GmbH))?';
 const hostPattern = /(?<![\p{L}\p{N}_-])(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]*[\p{L}\p{N}])?\.)+[\p{L}]{2,63}(?![\p{L}\p{N}_-])/gu;
+// Preserve service labels only when every other word describes a reviewed
+// public entity. Unknown organizations and person names remain candidates.
+const serviceWords = /^(?:(?:the|and|account|accounts|team|support|billing|payments|notifications|alerts|onboarding|security|privacy|search|console|ads|platform|cloud|community|events)(?:[\s,]+|$))+$/i;
+function publicServiceLabel(text, spans) {
+  if (text.length > 200 || !spans.length || spans.some(span => span.kind !== 'name')) return false;
+  let cursor = 0, remainder = '';
+  for (const span of spans) { remainder += text.slice(cursor, span.start) + ' '; cursor = span.end; }
+  remainder += text.slice(cursor);
+  return serviceWords.test(remainder.trim());
+}
 export function createPublicEntityPolicy({ names = [], domains = [] } = {}) {
   if (!Array.isArray(names) || !Array.isArray(domains) || names.length > 10000 || domains.length > 10000 || [...names, ...domains].some(v => typeof v !== 'string' || !v.trim() || v.length > 200)) throw Error('Invalid public-entity registry.');
   const aliases = [...new Set([...registry.flatMap(([aliases]) => aliases.split('|')), ...names])].sort((a, b) => b.length - a.length);
@@ -83,7 +93,8 @@ export function createPublicEntityPolicy({ names = [], domains = [] } = {}) {
     }
     found.sort((a, b) => a.start - b.start || b.end - a.end);
     let end = -1;
-    return found.filter(s => { if (s.start < end) return false; end = s.end; return true; });
+    const distinct = found.filter(s => { if (s.start < end) return false; end = s.end; return true; });
+    return publicServiceLabel(text, distinct) ? [{ start: 0, end: text.length, kind: 'name' }] : distinct;
   }
   const entityCache = new Map();
   function isEntity(value) {

@@ -68,3 +68,28 @@ test('Secret discovery and replacement respect the selected categories', () => {
   assert.equal(d.entries.size, 0);
   assert.equal(htmlText(source, d, 'replace'), source);
 });
+
+test('Authentication codes are protected in both sentence orders and inline HTML', () => {
+  for (const [source, transform, codes] of [
+    ['Your confirmation code is 482716', valueText, ['482716']],
+    ['731904 is your Example Log In Code', valueText, ['731904']],
+    ['Security code: 6294; password: violet; verification code = 84719302', valueText, ['6294', 'violet', '84719302']],
+    ['<h1>390817 is your Example sign-in code</h1><p>Verification code: <b>471903</b></p>', htmlText, ['390817', '471903']],
+    [JSON.stringify({ text: 'Your one-time code is 194732', count: '194732' }), jsonText, ['194732']],
+    [JSON.stringify({ text: 'Your verification code: 194732.', count: '194732' }), jsonText, ['194732']]
+  ]) {
+    const { output, d } = protect(source, transform, codes);
+    if (transform === jsonText) assert.equal(JSON.parse(output).count, '194732');
+    else assert.equal(output, [...d.entries.values()].reduce((text, row) => text.replace(row.original, row.replacement), source));
+  }
+});
+
+test('Ordinary numbers, incomplete codes, code samples and unrelated labels stay unchanged', () => {
+  for (const source of [
+    'Order code: 482716. Invoice number: 731904. Postal code: 6294.',
+    'Confirmation code is expired. Security code is required.',
+    'Verification code: 123456789; confirmation code: 123456-extra; security code: 1234.56',
+    '```text\nConfirmation code: 482716\n```',
+    '482716 appears in a report. A verification code is needed.'
+  ]) assert.equal(protect(source, valueText, []).output, source);
+});

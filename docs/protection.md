@@ -15,7 +15,7 @@ JSONL is streamed; an individual record is limited to 32 MiB. Other supported te
 
 - Select categories in the Protection step. Verified owner names, emails, phones and addresses remain unchanged; credentials and private identifiers are never exempted as owner data.
 - Default replacement pools need no second model. Optional **Local AI** uses Qwen3 through a managed local llama.cpp runtime. Its first download is about 1.1 GB plus runtime assets.
-- `ACTOUT_PROTECTION_BACKEND=cpu` selects CPU detection. The default prefers an available GPU and checks actual GPU execution before scanning. GPU failures stop the run instead of silently retrying on CPU.
+- Detection uses GLiNER PII Edge v1.0 at threshold `0.4`. The default loads FP32 weights and prefers an available GPU; `ACTOUT_PROTECTION_BACKEND=cpu` selects smaller UINT8 weights on CPU. FP32 keeps 32-bit floating-point weights; UINT8 quantizes weights to 8-bit integers and can change predictions. GPU execution is checked before scanning; GPU failures stop the run.
 - `ACTOUT_REPLACEMENT_BACKEND=cpu` selects CPU generation. The default uses a supported local accelerator when available.
 - Runtime assets live in Electron's user-data directory under `protection-model/`. Downloads use pinned revisions, size limits and SHA-256 checks. Export content is not sent to a hosted model.
 
@@ -24,6 +24,8 @@ JSONL is streamed; an individual record is limited to 32 MiB. Other supported te
 Filenames, structural record IDs/timestamps, JSON keys, CSV headers, routing metadata, markup structure and attachment contents can retain sensitive data. Legacy MIME attachments are preserved without analysis. Known owner contact values and public entities are intentionally retained. Language coverage and spelling-style guesses are limited; replacements may coincide with real names or destinations.
 
 Read the protection report and review both changed and unchanged content. A finished run reports processing completion, not proof that all sensitive information was found. Never use synthetic addresses or phone numbers for contact.
+
+Explicitly labeled numeric authentication codes supplement model detection. Public service labels are preserved only when they combine a reviewed public entity with service words. Unknown organizations remain candidates. Public benchmarks contain synthetic controls committed to the repository; private benchmarks contain reviewed export samples stored locally. Both are regression suites, not unseen estimates of production accuracy.
 
 ## Models and licenses
 
