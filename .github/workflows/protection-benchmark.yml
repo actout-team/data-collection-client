@@ -1,9 +1,9 @@
 name: Protection regression benchmark
 on:
   push:
-    paths: ['src/**', 'extension/**', 'ui/**', 'scripts/**', 'benchmarks/**', 'test/**', 'package*.json', '.github/workflows/protection-benchmark.yml']
+    paths: ['src/**', 'extension/**', 'ui/**', 'scripts/**', '*.command', 'benchmarks/**', 'test/**', 'package*.json', '.github/workflows/protection-benchmark.yml']
   pull_request:
-    paths: ['src/**', 'extension/**', 'ui/**', 'scripts/**', 'benchmarks/**', 'test/**', 'package*.json', '.github/workflows/protection-benchmark.yml']
+    paths: ['src/**', 'extension/**', 'ui/**', 'scripts/**', '*.command', 'benchmarks/**', 'test/**', 'package*.json', '.github/workflows/protection-benchmark.yml']
   workflow_dispatch:
 permissions:
   contents: read

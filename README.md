@@ -6,20 +6,17 @@ A local macOS app that exports work data through your signed-in Chrome tabs and 
 
 Requires macOS, Chrome, Node.js 24+ and npm.
 
-1. Download this repository's source ZIP and extract it, or use a local checkout.
-2. Open Terminal in the project folder:
-
-   ```sh
-   npm ci
-   npm start
-   ```
+1. Download this repository's source ZIP and extract it, or use a local checkout. Keep the project in a folder you can access, such as `~/Projects/`.
+2. Double-click **Install.command** to check setup, install dependencies and start the app. It always runs from the project folder. From Terminal, you can also run `bash Install.command` in that folder.
 
 3. In Chrome, open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select the project's `extension/` folder.
 4. Open **AgentSim Local Bridge**, click **Pair desktop app**, approve site access, then approve pairing in the desktop app.
 5. Sign in to the apps you need. In Collect, select each app, click **Connect**, and choose its browser tab. Keep Chrome open. Refresh Gmail once if its session headers are not ready.
 6. Choose **Days back** (default 90) and an output folder, download, then choose protection settings and create the protected copy. Review its report before sharing.
 
-After updating source, run `npm ci` and `npm start`, reload the extension in Chrome, then refresh connected app tabs. The build stamps the extension and all browser helpers with the desktop version. If pairing fails, keep the desktop app open and check that port `4319` is available.
+After updating source, rerun **Install.command**, reload the extension in Chrome, then refresh connected app tabs. For later launches without reinstalling dependencies, run `npm start` in the project folder. The build stamps the extension and all browser helpers with the desktop version. If pairing fails, keep the desktop app open and check that port `4319` is available.
+
+**macOS `EPERM: uv_cwd`:** npm cannot access the current folder and has not loaded the app. Run `cd ~`, then enter the extracted project folder again. If access is still denied, allow your terminal app to access that folder in **System Settings > Privacy & Security > Files and Folders**, or move the project with Finder to `~/Projects/`. Open a new terminal, enter the project's new location, and retry `npm ci && npm start`.
 
 ## Connectors
 
