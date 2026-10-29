@@ -2,6 +2,18 @@
 
 A local macOS app that exports work data through your signed-in Chrome tabs and creates a separate copy with consistent replacements for sensitive values. Built with Electron and a Chrome extension. No hosted backend or app API keys.
 
+## Local protection
+
+ActOut Collect Client helps users prepare business data for sharing by detecting and replacing sensitive information locally. The goal is to protect private details while preserving useful context. In our evaluation, **327 of 328 sensitive values were fully protected**, though some harmless content was also changed.
+
+Results across **333 regression cases and 1,054 scored regions**, using GLiNER PII Edge v1.0 in FP32 on CPU at threshold 0.4:
+
+| Accuracy | Precision | Recall | F1 score | False-positive rate |
+| ---: | ---: | ---: | ---: | ---: |
+| 89.28% | 74.49% | 99.70% | 85.27% | 15.43% |
+
+Users should review the protected output before sharing.
+
 ## Setup
 
 Requires macOS, Chrome, [Node.js 24+ with npm](https://nodejs.org/en/download). Close any running copy of the client first.
