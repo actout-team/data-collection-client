@@ -1,6 +1,5 @@
 import { MODEL, LABELS } from './model-config.mjs';
-// Supplemental deterministic recognition stays independent of the model.
-// These rules do not gate contextual model predictions.
+// Explicit field and assignment rules run independently of model refinement.
 export const credentialPattern = /\b(?:xox[baprsco]-[A-Za-z0-9-]{8,}|sk-[A-Za-z0-9_-]{16,}|AKIA[A-Z0-9]{16}|eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)\b|-----BEGIN (?:[A-Z ]*PRIVATE KEY)-----[\s\S]+?-----END (?:[A-Z ]*PRIVATE KEY)-----/g;
 const labelOnly = /^(?:password|passwd|pwd|secret|token|api[ _-]?key|email|e-mail|name|first|last|ssn|ein|iban|passport|account|number|address|phone|signature|unsubscribe|click|here|login|sign[ -]?in|privacy|policy|help|support)$/i;
 const codeLabel = '(?:verification|confirmation|security|authentication|log[ -]?in|sign[ -]?in|one[ -]time|two[ -]factor) code';
@@ -12,8 +11,8 @@ const codePatterns = [
 export function plausibleCredential(value, { explicit = false } = {}) {
   const label = value?.replace(/[.!?]+$/, '');
   if (!value?.trim() || labelOnly.test(label) || /^(?:reset|expired|incorrect|invalid|required|protected|changed|encrypted|missing|none|null|undefined|true|false|redacted|hidden|not|the|your|a|an)$/i.test(label)) return false;
-  if (/^(?:https?:)?\/\//i.test(value) || /(?:=\?|\?=|<[^>]+>)/.test(value)) return false;
   if (explicit) return true; // A labelled password can be a weak, ordinary word.
+  if (/^(?:https?:)?\/\//i.test(value) || /(?:=\?|\?=|<[^>]+>)/.test(value)) return false;
   return value.length >= 8 && !/\s/.test(value) && /[a-z]/i.test(value) && /[\d!@#$%^&*_=+/-]/.test(value);
 }
 export function credentialAssignments(text) {
@@ -40,13 +39,32 @@ export function credentialAssignments(text) {
     end = range.end; return true;
   });
 }
-// Semantic classification belongs to the model. Do not veto a prediction
-// because its value lacks an English keyword, prefix, or hand-written shape.
-// Structure boundaries, selected categories and public/owner policies are
-// enforced separately by the format router and detector.
+// Validate raw model output before selecting overlapping predictions.
+// Refine the winning value separately, without promoting a weaker overlap.
 export function admitModelSpan(span, text) {
   const { start, end, category, score } = span;
   return Number.isInteger(start) && Number.isInteger(end) && start >= 0 && end <= text.length && start < end
     && Object.values(LABELS).includes(category) && Number.isFinite(score) && score >= MODEL.threshold
     && Boolean(text.slice(start, end).trim());
+}
+
+const credentialLabel = /^(?:(?:verification|confirmation|security|authentication|login|sign[- ]in|one[- ]time)\s+code|passwords?|api[ _-]?keys?)$/i;
+const structuralValue = /^(?:<\/?[a-z][^>]*>?|gmail_(?:quote|signature(?:_prefix)?)|[^\s/]*@\dx\.(?:png|jpe?g|gif|webp|svg))$/i;
+const credentialContext = /\b(?:password|passphrase|passwd|credential|api[ _-]?key|access[ _-]?token|secret|log\s*in|sign\s*in)\b|סיסמ[אהת]|קוד\s+(?:אימות|כניסה)/iu;
+
+// Refine the winning model span, without changing its labels, threshold or
+// numeric decisions. Explicit field/assignment rules remain independent.
+export function refineModelSpan(span, text) {
+  if (!admitModelSpan(span, text)) return;
+  let { start, end, category } = span;
+  const value = text.slice(start, end).trim();
+  if (labelOnly.test(value) || credentialLabel.test(value) || structuralValue.test(value)) return;
+  if (category === 'secrets' && /^[\p{L}\p{M}\s'’.-]+$/u.test(value)
+      && !/\p{Ll}\p{Lu}/u.test(value) && !/^[A-Z][A-Z-]{3,}$/.test(value)
+      && !credentialContext.test(text.slice(Math.max(0, start - 80), start) + ' ' + text.slice(end, end + 80))) return;
+  if (category === 'names') {
+    const greeting = /^(?:hi|hello|dear|היי|שלום|תודה)\s+/iu.exec(text.slice(start, end));
+    if (greeting && start + greeting[0].length < end) start += greeting[0].length;
+  }
+  return { ...span, start, end };
 }

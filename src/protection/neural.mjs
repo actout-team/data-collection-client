@@ -3,7 +3,7 @@ import { backendLabel } from './model-backend.mjs';
 import { createHash } from 'node:crypto';
 import { ensureModel } from './model-cache.mjs';
 import { MODEL, GPU_MODEL } from './model-config.mjs';
-import { admitModelSpan } from './entity-quality.mjs';
+import { refineModelSpan } from './entity-quality.mjs';
 import { textWindows } from './model-context.mjs';
 export { textWindows } from './model-context.mjs';
 export async function createNeural({ directory, categories, signal, progress, log = () => {}, preference = 'auto', precision }) {
@@ -21,8 +21,9 @@ export async function createNeural({ directory, categories, signal, progress, lo
   }
   function add(span, text, detector) {
     validate(span, text);
-    let { start, end, category } = span;
-    if (!admitModelSpan(span, text)) return;
+    const refined = refineModelSpan(span, text);
+    if (!refined) return;
+    const { start, end, category } = refined;
     detector.add(text.slice(start, end), category, { source: 'model', label: span.label, score: span.score }, text);
   }
   async function discoverMany(values, detector, tick = () => {}) {
@@ -47,7 +48,7 @@ export async function createNeural({ directory, categories, signal, progress, lo
     }
   }
   return {
-    get info() { return { id: model.id, revision: model.revision, precision: model.precision, language: model.language, threshold: model.threshold, admissionPolicy: 'model-confidence-and-boundaries-v2', contextPolicy: 'passage-scoped-with-visible-dom-v2', runtime: 'ONNX Runtime', backend: worker.backend, backendLabel: backendLabel(worker.backend), acceleration: worker.acceleration, inferenceCalls, cacheHits, network: 'model download only' }; },
+    get info() { return { id: model.id, revision: model.revision, precision: model.precision, language: model.language, threshold: model.threshold, admissionPolicy: 'contextual-values-v3', contextPolicy: 'passage-scoped-with-visible-dom-v2', runtime: 'ONNX Runtime', backend: worker.backend, backendLabel: backendLabel(worker.backend), acceleration: worker.acceleration, inferenceCalls, cacheHits, network: 'model download only' }; },
     discover: (value, detector, tick) => discoverMany([value], detector, tick), discoverMany,
     get scanned() { return scanned; },
     close() { return closed ||= (async () => { log('info', `Model scan: ${scanned} text fragments, ${inferenceCalls} model calls, ${cacheHits} cache hits, ${Math.round((performance.now() - started) / 1000)} seconds.`); await worker.close(); })(); }

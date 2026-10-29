@@ -17,7 +17,7 @@ const rules = {
 export function fieldCategory(key, context, value) {
   key = normalized(key);
   if (/^(?:password|passwd|pwd|secret|client_secret|api_key|apikey|access_token|refresh_token|auth_token|authorization|private_key|cookie|set_cookie)$/.test(key)) return 'secrets';
-  if (/^(?:e_?mail|email_address)$/.test(key) || (key === 'address' && value.includes('@'))) return 'emails';
+  if (/^(?:e_?mail|email_address|mailto)$/.test(key) || (key === 'address' && value.includes('@'))) return 'emails';
   if (/^(?:(?:mobile|home|work)_?)?(?:phone|telephone|mobile|fax)(?:_?number)?$/.test(key)) return 'phones';
   if (/^(?:first_?name|last_?name|surname|full_?name|real_name|real_name_normalized|display_?name|display_name_normalized|given_?name|family_?name|contact_name|customer_name|employee_name)$/.test(key) || (key === 'name' && /(?:users?|profile|contacts?|people|employees?|customers?|from|to|cc|bcc|sender|recipient)/i.test(context))) return 'names';
   if (/^(?:company|company_name|organization|organization_name|organisation|organisation_name|employer|business_name|legal_name)$/.test(key) || (key === 'name' && /(?:companies|organizations|organisations|employers)/i.test(context))) return 'companies';
@@ -46,6 +46,19 @@ export function createDetector(categories, { observe, namePreference = 'auto', p
     if (!selected.has(category) || value == null) return;
     value = String(value);
     if (!value.trim()) return;
+    if (category === 'emails' && detection.source === 'model') {
+      const mailboxes = [...value.matchAll(email)].filter(mailbox => {
+        const before = value.slice(0, mailbox.index), after = value.slice(mailbox.index + mailbox[0].length);
+        // Strip presentation wrappers, not Unicode local parts or host suffixes.
+        const wrapped = /(?<![\p{L}\p{N}_@.+-])(?:@|אל)$/u.test(before);
+        return (!/[\p{L}\p{N}_@.+-]$/u.test(before) || wrapped)
+          && !/^[\p{L}\p{N}_@+-]|^\.[\p{L}\p{N}]/u.test(after);
+      });
+      if (mailboxes.length && (mailboxes.length > 1 || mailboxes[0][0] !== value)) {
+        for (const mailbox of mailboxes) add(mailbox[0], category, detection, passage);
+        return;
+      }
+    }
     if (ownerPolicy.matches(category, value)) { ownerPolicy.preserve(); return; }
     if (passage !== undefined && (detection.source === 'model' || category === 'secrets')) {
       if (!evidence.has(value)) evidence.set(value, new Set());

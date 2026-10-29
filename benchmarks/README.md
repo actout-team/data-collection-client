@@ -26,6 +26,11 @@ contributors without private data explicitly use `-- --public-only`.
   development. None is an unseen holdout. New raw data should be grouped by
   account/person/thread before reserving an untouched holdout.
 
+The private clear-error extension adds 1,105 reviewed originals and 19 contextual
+controls. It excludes unresolved short-number detections from error labels.
+Standalone term projections test neutral usage, not their unavailable source
+contexts. Report this targeted suite separately from the original benchmark.
+
 Each case stores exact input, source provenance, UTF-16 half-open offsets and
 SHA-256 hashes for the input and annotated text. Offsets refer to serialized
 source text, so JSON escapes and HTML entities retain their source boundaries.
@@ -107,6 +112,11 @@ to reuse a model cache. Models are checksum-pinned and downloaded on first use.
 Private fixtures, baselines and run reports are gitignored. CI only uploads
 public-control reports. Reports contain case/region IDs and counts, not source
 text or replacement values.
+
+Private extensions named `ground-truth.<suite>.private.json` are included
+automatically, using `baseline.<suite>.cpu-uint8.json` and
+`baseline.<suite>.cpu-float32.json` in the same directory. Keep the original
+dataset and baselines unchanged when adding a suite.
 
 A baseline is created only with explicit `--write-baseline --baseline NEW_PATH`.
 It refuses to overwrite an existing file. Never refresh a baseline to make a

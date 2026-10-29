@@ -27,6 +27,8 @@ Read the protection report and review both changed and unchanged content. A fini
 
 Explicitly labeled numeric authentication codes supplement model detection. Public service labels are preserved only when they combine a reviewed public entity with service words. Unknown organizations remain candidates. Public benchmarks contain synthetic controls committed to the repository; private benchmarks contain reviewed export samples stored locally. Both are regression suites, not unseen estimates of production accuracy.
 
+Model refinement excludes credential labels and known markup fragments, requires nearby credential context for ordinary alphabetic secret candidates, and trims greetings from name spans. Numeric model decisions are unchanged. Email spans are split into mailboxes before owner checks. Explicit secret fields remain protected, including URL-valued tokens. These narrow checks reduce over-selection but do not resolve all ordinary-language or merged-span errors.
+
 ## Models and licenses
 
 | Component | Source | License |
