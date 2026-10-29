@@ -144,6 +144,7 @@ export async function ensureGenerator(root, options = {}) {
   if (!root || !path.isAbsolute(root)) throw Error('A private absolute runtime-cache directory is required.');
   const target = options.target || await detectRuntimeTarget(options.preference || 'auto');
   const executable = await installRuntime(root, target, options);
-  const model = await ensureAsset(path.join(root, 'models', GENERATOR_MODEL.revision), GENERATOR_MODEL, { ...options, phase: 'Downloading replacement model' });
+  const asset = options.modelAsset || GENERATOR_MODEL;
+  const model = await ensureAsset(path.join(root, 'models', asset.revision), asset, { ...options, phase: options.modelPhase || 'Downloading replacement model' });
   return { executable, model, target, root, runtimeDirectory: path.resolve(root, 'runtimes', RUNTIME_VERSION + '-' + target.id) };
 }

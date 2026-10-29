@@ -19,7 +19,7 @@ export function aggregateReports(reports) {
   const ratio = (n, d) => d ? n / d : null;
   return {
     version: 1, createdAt: new Date().toISOString(), sourceRevision, signature,
-    suites: reports.map(({ dataset, datasetSha256, summary }) => ({ dataset, datasetSha256, summary })),
+    suites: reports.map(({ dataset, datasetSha256, summary, pipeline }) => ({ dataset, datasetSha256, summary, pipeline })),
     summary, scoredRegions: TP + FP + TN + FN,
     metrics: { accuracy: ratio(TP + TN, TP + FP + TN + FN), precision: ratio(TP, TP + FP),
       recall: ratio(TP, TP + FN), F1: ratio(2 * TP, 2 * TP + FP + FN),

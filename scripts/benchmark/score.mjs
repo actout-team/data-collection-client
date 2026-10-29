@@ -168,7 +168,28 @@ export function compareBaseline(report, baseline) {
   if (report.datasetSha256 !== baseline.datasetSha256
     || JSON.stringify(report.signature) !== JSON.stringify(baseline.signature)) throw Error('Baseline dataset/model configuration differs. Do not compare unlike runs.');
   const previous = new Set(baseline.failures);
-  const regressions = report.failures.filter(item => !previous.has(item));
+  // A shorter edit inside an already incorrect span does not introduce a new
+  // error. Still reject any edit that reaches previously untouched characters.
+  const oldEdits = new Map();
+  for (const item of previous) {
+    const match = /^(.*):unexpected:(\d+):(\d+)$/.exec(item);
+    if (!match) continue;
+    if (!oldEdits.has(match[1])) oldEdits.set(match[1], []);
+    oldEdits.get(match[1]).push([Number(match[2]), Number(match[3])]);
+  }
+  for (const ranges of oldEdits.values()) ranges.sort((a, b) => a[0] - b[0]);
+  const regressions = report.failures.filter(item => {
+    if (previous.has(item)) return false;
+    const match = /^(.*):unexpected:(\d+):(\d+)$/.exec(item);
+    if (!match) return true;
+    let covered = Number(match[2]);
+    for (const [start, stop] of oldEdits.get(match[1]) || []) {
+      if (start > covered) break;
+      covered = Math.max(covered, stop);
+      if (covered >= Number(match[3])) return false;
+    }
+    return true;
+  });
   for (const [id, covered] of Object.entries(report.coverage)) {
     if (!(id in baseline.coverage)) throw Error('Baseline coverage is incomplete.');
     if (covered < baseline.coverage[id]) regressions.push(`${id}:reduced-coverage`);

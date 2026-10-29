@@ -48,6 +48,18 @@ test('Baseline comparison rejects unlike runs and catches new failures and worse
  assert.throws(()=>compareBaseline({...base,datasetSha256:'b'},base),/differs/);
  assert.throws(()=>compareBaseline({...base,signature:{precision:'float32'}},base),/differs/);
 });
+test('Narrower false edits are improvements, but new characters and gaps still fail the gate', () => {
+ const base={version:1,datasetSha256:'a',signature:{},coverage:{},failures:['case:unexpected:2:6','case:unexpected:6:12']};
+ const compare=failures=>compareBaseline({...base,failures},base);
+ assert.deepEqual(compare(['case:unexpected:4:10']),[]);
+ assert.deepEqual(compare(['case:unexpected:2:12']),[]);
+ assert.deepEqual(compare(['case:unexpected:1:10']),['case:unexpected:1:10']);
+ assert.deepEqual(compare(['case:unexpected:4:13']),['case:unexpected:4:13']);
+ const gap={...base,failures:['case:unexpected:2:5','case:unexpected:6:12']};
+ assert.deepEqual(compareBaseline({...base,failures:['case:unexpected:2:10']},gap),['case:unexpected:2:10']);
+ assert.deepEqual(compare(['other:unexpected:4:10']),['other:unexpected:4:10']);
+ assert.deepEqual(compare(['case:retained:owner']),['case:retained:owner']);
+});
 test('Public corpus oracle scores perfectly and a mutation in every retained region is detected',async()=>{
  const corpus=validateDataset(JSON.parse(await readFile(new URL('../benchmarks/public-controls.json',import.meta.url))));
  for(const c of corpus.cases){

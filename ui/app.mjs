@@ -147,7 +147,7 @@ function render(next) {
   $('#mapping').disabled = !protectedReady;
   $('#export-report').disabled = !protectedReady;
   $('#name-style').disabled = !!state.busy; $('#generation-mode').disabled = !!state.busy;
-  $('#generation-help').textContent = $('#generation-mode').value === 'local-model' ? 'Local AI sets itself up on first use (about 1.1 GB plus the runtime), then works offline. Spelling style is approximate.' : 'No additional model. Unfamiliar names use spelling pools and may lose regional style.';
+  $('#generation-help').textContent = $('#generation-mode').value === 'local-model' ? 'Local AI sets itself up on first use (about 1.1 GB in addition to the detection models), then works offline. Spelling style is approximate.' : 'No additional replacement model. Unfamiliar names use spelling pools and may lose regional style.';
   $('#protect').disabled = !canReview(state) || !protections.size;
   $('#abort-protection').hidden = !state.busy;
   for (const input of $('#protection-options').querySelectorAll('input')) input.disabled = !!state.busy;

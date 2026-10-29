@@ -36,8 +36,11 @@ additional pre-existing detection misses in each precision and one additional
 partial miss in UINT8; do not omit these cases from the headline results.
 
 Use **all current suites** for the primary comparison, with per-suite results
-retained for diagnosis. The current total is 1,481 cases, 2,251 scored regions
-(370 sensitive and 1,881 retained), plus 290 unresolved review regions.
+retained for diagnosis. The current total is 1,541 cases, 2,383 scored regions
+(406 sensitive and 1,977 retained), plus 290 unresolved review regions.
+Two additional suites contain 48 paired context controls and 12 source-instruction
+safety controls. Their labels were fixed before inference; they are now regression
+cases after diagnosing candidate failures.
 The 301 uncertain short-number error candidates remain excluded; existing
 explicit numeric-password and authentication-code controls stay in the suite.
 
@@ -102,7 +105,10 @@ labeler agreement or production recall estimate. No confidence interval is
 reported as if correlated occurrences were independent.
 
 The gate rejects new misses, unwanted edits, invariant failures, and reduced
-coverage of already partially missed entities. It checks dataset/model revision,
+coverage of already partially missed entities. Shrinking an existing unwanted edit
+within its previous bounds is not a new error; extending it into new characters
+still fails. Each precision and suite runs even if an earlier benchmark fails,
+and any failed gate keeps the validation command unsuccessful. It checks dataset/model revision,
 precision, backend, threshold and selected categories before comparison. Known
 baseline failures remain visible. A passing regression gate is not a clean
 privacy audit or release certification. CPU FP32 verifies the desktop model's
@@ -136,16 +142,32 @@ records each dataset hash and rejects duplicate datasets, mixed model settings
 or mixed source revisions. `--public-only` produces explicitly limited results.
 Never substitute the smaller CI dataset for the complete local evaluation.
 
-Version 0.3.47 adds a second semantic prompt for company candidates, comparing
-identity labels with ordinary words, technical terms and markup. It adds no
-term-specific allowlists or denylists. Short identity fragments and numeric
-decisions retain the existing policy. The verifier only filters primary
-company spans; it cannot introduce detections or public-entity exemptions.
-Each passage containing an eligible company candidate needs an additional
-inference pass with the same local model. No additional model is downloaded.
-Compared with 0.3.46 on the same full corpus, false positives fall from 569 to
-501 in FP32 and from 425 to 341 in UINT8, with unchanged sensitive coverage
-and no new per-case regression failures. Known failures remain in the baseline.
+Version 0.3.48 keeps the detector, threshold and numeric policy unchanged and
+adds a local Qwen3-4B-Instruct-2507 Q4_K_M verifier. Two semantic checks must
+agree that a model candidate is ordinary text before it is suppressed. A third,
+conditional boundary check retains multiword identity proposals when a smaller
+name occurs inside them. Ambiguous or incomplete responses retain protection.
+Explicit field/rule detections remain independent. No sample-specific term
+lists were added. The verifier costs about 2.5 GB on first use and adds inference
+time; it runs locally using the managed llama.cpp runtime.
+
+The experiment record contains 169 model/precision configurations across
+thresholds, GLiNER prompts, decoding, alternative models and verifier policies.
+Selection used grouped tuning cases, followed by full-corpus regression checks.
+The 60 new controls were also used to diagnose candidate failures, so they are
+now regression cases. Repeated iteration does not establish generalization;
+new independently labeled source groups are needed for that claim. Numeric-only
+candidate decisions and all frozen annotations/baselines remain unchanged.
+
+On the same expanded corpus, precision changes from 43.22% to 67.53% in FP32
+and 52.07% to 70.14% in UINT8. Complete sensitive coverage remains 388/406
+and 389/406 respectively, with no decreased per-case coverage. UINT8 has no
+new regression failures. FP32 has three gate findings in two amount-containing
+cases: one newly touched negative region and two changed numeric edit spans.
+These remain scored. The full validation command therefore exits unsuccessfully;
+all other regression checks pass. Numeric behavior is outside this change's
+requested fixes; the failures are documented rather than removed from baselines.
+The selected candidate preserves coverage instead of forcing FP32 above 70%.
 
 A baseline is created only with explicit `--write-baseline --baseline NEW_PATH`.
 It refuses to overwrite an existing file. Never refresh a baseline to make a

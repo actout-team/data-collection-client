@@ -39,7 +39,7 @@ async function start(config) {
   // Zero model layers alone still lets llama.cpp initialize GPU KV/ops.
   if (target.gpu === 'cpu') args.push('--device', 'none', '--no-kv-offload', '--no-op-offload');
   const startup={stdout:'',stderr:''}; let gpuLayers=0;
-  send({log:`Starting replacement runtime: ${target.gpu}. Verifying model-layer allocation.`});
+  send({log:`Starting local AI runtime: ${target.gpu}. Verifying model-layer allocation.`});
   server=spawn(executable,args,{env,cwd:path.dirname(executable),windowsHide:true,stdio:['ignore','pipe','pipe']});
   exited=new Promise(resolve=>server.once('close',()=>{dead=true;send({nativeExited:true});resolve();}));
   server.on('error',()=>{dead=true;});
@@ -55,7 +55,7 @@ async function start(config) {
       const response=await fetch(base+'/health',{headers:{Authorization:`Bearer ${secret}`},redirect:'error',signal:AbortSignal.timeout(1500)});
       if(response.ok && (await response.json()).status==='ok') {
         if(target.gpu!=='cpu' && !gpuLayers) throw Error('GPU allocation was not verified.');
-        ready=true;startup.stdout='';startup.stderr='';send({log:`Replacement runtime ready: ${target.gpu}, ${gpuLayers} GPU layers.`});
+        ready=true;startup.stdout='';startup.stderr='';send({log:`Local AI runtime ready: ${target.gpu}, ${gpuLayers} GPU layers.`});
         return {backend:target.gpu,gpuLayers};
       }
     } catch(error) { if(error.message==='GPU allocation was not verified.') throw error; }

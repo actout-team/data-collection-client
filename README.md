@@ -6,18 +6,20 @@ A local macOS app that exports work data through your signed-in Chrome tabs and 
 
 ActOut Collect Client detects and replaces sensitive information locally so users can prepare business data for sharing while preserving useful context. It can still miss private details or change harmless text. Review the protected output before sharing.
 
-Results across the full **1,481-case regression dataset and 2,251 scored regions**, using GLiNER PII Edge v1.0 on CPU at threshold 0.4. Uncertain short-number cases are excluded.
+Results across all **1,541 regression cases and 2,383 scored regions**. Both detector precisions use GLiNER PII Edge v1.0 at threshold 0.4, followed by a local Qwen3-4B Q4_K_M verifier. Measured on CPU; uncertain short-number cases are excluded.
 
 | Metric | FP32 | UINT8 |
 | --- | ---: | ---: |
-| Accuracy | 77.48% | 84.50% |
-| Precision | 42.08% | 51.49% |
-| Recall | 98.38% | 97.84% |
-| F1 | 58.95% | 67.47% |
-| False-positive rate | 26.63% | 18.13% |
-| Fully protected sensitive values | 364 / 370 | 361 / 370 |
+| Accuracy | 91.44% | 92.36% |
+| Precision | 67.53% | 70.14% |
+| Recall | 95.81% | 96.06% |
+| F1 | 79.23% | 81.08% |
+| False-positive rate | 9.46% | 8.40% |
+| Fully protected sensitive values | 388 / 406 | 389 / 406 |
 
-These test results do not estimate production accuracy. Recall counts any edit overlap; full protection requires covering the entire sensitive value. See [evaluation details](benchmarks/README.md).
+On the same dataset, precision increased from 43.22% to 67.53% in FP32 and 52.07% to 70.14% in UINT8, with unchanged sensitive coverage. The verifier adds a 2.5 GB first-use download and scanning time.
+
+These results do not estimate production accuracy. Recall counts any edit overlap; full protection requires covering the entire sensitive value. See [evaluation details](benchmarks/README.md).
 
 ## Setup
 

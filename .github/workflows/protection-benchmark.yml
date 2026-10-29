@@ -35,7 +35,7 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .model-cache
-          key: gliner-9b7f39b-uint8-float32-v1
+          key: gliner-9b7f39b-qwen-a06e946-llama-b11658-v2
       - run: npm ci
       - run: npm run validate:protection -- --public-only
       - uses: actions/upload-artifact@v4
