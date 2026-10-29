@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { chmod, copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 
 async function fixture(t, options = {}) {
   const root = await mkdtemp(path.join(tmpdir(), 'collect-install-'));
@@ -66,24 +66,22 @@ test('Installer reports app startup failures instead of claiming success', async
   assert.match(result.stderr, /ActOut Collect Client could not start/);
 });
 
-for (const downloadFails of [false, true]) {
-  test(`README command from an unrelated folder ${downloadFails ? 'stops on download failure' : 'installs in a fresh Projects folder'}`, async t => {
-    const f = await fixture(t);
-    const home = path.join(f.root, 'home with spaces');
-    await mkdir(home);
-    const command = (await readFile(new URL('../README.md', import.meta.url), 'utf8')).match(/```sh\n([\s\S]*?)\n```/)[1];
-    await writeFile(path.join(f.bin, 'curl'), `#!/bin/bash\nexit ${downloadFails ? 22 : 0}\n`);
-    await writeFile(path.join(f.bin, 'unzip'), '#!/bin/bash\nmkdir -p "$4/data-collection-client-main"\ncp "$INSTALL_TEST_SOURCE/Install.command" "$INSTALL_TEST_SOURCE/package.json" "$INSTALL_TEST_SOURCE/package-lock.json" "$4/data-collection-client-main/"\n');
-    for (const name of ['curl', 'unzip']) await chmod(path.join(f.bin, name), 0o755);
-    const result = spawnSync('/bin/bash', ['-c', command], { cwd: tmpdir(), env: { ...f.env, HOME: home, INSTALL_TEST_SOURCE: f.project }, encoding: 'utf8' });
-    if (downloadFails) {
-      assert.equal(result.status, 22);
-      await assert.rejects(readFile(f.log), { code: 'ENOENT' });
+const npmCLI = process.env.npm_execpath || execFileSync('which', ['npm'], { encoding: 'utf8' }).trim();
+for (const installFails of [false, true]) {
+  test(`README setup command ${installFails ? 'stops on installation failure' : 'runs from a downloaded folder with spaces'}`, async t => {
+    const f = await fixture(t, { ciStatus: installFails ? 17 : 0 });
+    const sourcePackage = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
+    await writeFile(path.join(f.project, 'package.json'), JSON.stringify({ name: 'setup-fixture', scripts: { setup: sourcePackage.scripts.setup } }));
+    const command = (await readFile(new URL('../README.md', import.meta.url), 'utf8')).match(/```sh\n([\s\S]*?)\n```/)[1].trim().split(/\s+/);
+    assert.equal(command.shift(), 'npm');
+    const result = spawnSync(process.execPath, [npmCLI, ...command], { cwd: f.project, env: f.env, encoding: 'utf8' });
+    const calls = (await readFile(f.log, 'utf8')).trim().split('\n').map(line => line.split(':')[0]);
+    if (installFails) {
+      assert.notEqual(result.status, 0);
+      assert.deepEqual(calls, ['ci --include=dev --ignore-scripts=false']);
     } else {
       assert.equal(result.status, 0, result.stderr);
-      const log = await readFile(f.log, 'utf8');
-      assert.ok(log.includes(home + '/Projects/actout-collect-client.'));
-      assert.match(log, /start:.*\/data-collection-client-main\n/);
+      assert.deepEqual(calls, ['ci --include=dev --ignore-scripts=false', 'start']);
     }
   });
 }

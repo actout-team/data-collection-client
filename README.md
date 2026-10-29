@@ -6,35 +6,28 @@ A local macOS app that exports work data through your signed-in Chrome tabs and 
 
 Requires macOS, Chrome, [Node.js 24+ with npm](https://nodejs.org/en/download). Close any running copy of the client first.
 
-**Copy this entire block into Terminal and press Return.** It downloads a fresh copy into `~/Projects/`, installs dependencies and opens **ActOut Collect Client**. No Git installation or Finder launch is needed.
+Extract the downloaded codebase anywhere. Open a terminal in its root folder, the one containing `package.json`.
+
+**Copy and run this command to install dependencies and open ActOut Collect Client:**
 
 ```sh
-(
-  cd "$HOME" &&
-  mkdir -p Projects &&
-  setup_dir="$(mktemp -d "$HOME/Projects/actout-collect-client.XXXXXX")" &&
-  curl --fail --location https://github.com/actout-team/data-collection-client/archive/refs/heads/main.zip --output "$setup_dir/source.zip" &&
-  unzip -q "$setup_dir/source.zip" -d "$setup_dir" &&
-  bash "$setup_dir/data-collection-client-main/Install.command"
-)
+npm run setup
 ```
 
-1. In Chrome, open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select the `extension/` path printed in Terminal.
+1. In Chrome, open `chrome://extensions`, enable **Developer mode**, choose **Load unpacked**, and select the project's `extension/` folder. Its full path is also shown in the app.
 2. Open **ActOut Collect Client Bridge**, click **Pair desktop app**, approve site access, then approve pairing in the desktop app.
 3. Sign in to the apps you need. In Collect, select each app, click **Connect**, and choose its browser tab. Keep Chrome open. Refresh Gmail once if its session headers are not ready.
 4. Choose **Days back** (default 90) and an output folder, download, then choose protection settings and create the protected copy. Review its report before sharing.
 
-After updating source, rerun **Install.command**, reload the extension in Chrome, then refresh connected app tabs. For later launches without reinstalling dependencies, run `npm start` in the project folder. The build stamps the extension and all browser helpers with the desktop version. If pairing fails, keep the desktop app open and check that port `4319` is available.
-
-Already have the source? Open Terminal in its folder and run:
+After updating source, rerun `npm run setup`, reload the extension in Chrome, then refresh connected app tabs. For later launches without reinstalling dependencies:
 
 ```sh
-bash Install.command
+npm start
 ```
 
-Existing model downloads and settings are reused when available. Re-pair Chrome if prompted after updating.
+Both commands run from the project root, regardless of its name or location. Existing model downloads and settings are reused when available. Re-pair Chrome if prompted after updating. If pairing fails, keep the desktop app open and check that port `4319` is available.
 
-**macOS `EPERM: uv_cwd`:** npm cannot access the current folder and has not loaded the app. Run `cd ~`, then enter the extracted project folder again. If access is still denied, allow your terminal app to access that folder in **System Settings > Privacy & Security > Files and Folders**, or move the project with Finder to `~/Projects/`. Open a new terminal, enter the project's new location, and retry `npm ci && npm start`.
+**macOS `EPERM: uv_cwd`:** npm cannot access the current folder and has not loaded the app. Run `cd ~`, then enter the extracted project folder again. If access is still denied, allow your terminal app to access that folder in **System Settings > Privacy & Security > Files and Folders**, or move the project with Finder to `~/Projects/`. Open a new terminal, enter the project's new location, and retry `npm run setup`.
 
 ## Connectors
 
