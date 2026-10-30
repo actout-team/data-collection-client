@@ -1,25 +1,12 @@
 # ActOut Collect Client
 
-A local macOS app that exports work data through your signed-in Chrome tabs and creates a separate copy with consistent replacements for sensitive values. Built with Electron and a Chrome extension. No hosted backend or app API keys.
+Prepare detailed business datasets for AI agent development with a local, open-source collection and PII obfuscation tool.
 
-## Local protection
+1. **Install locally with fully readable code.** Inspect the open-source desktop app and Chrome extension, and keep collection and processing on your machine for greater privacy and control.
+2. **Connect through your existing browser sessions.** Collect from supported business apps and data sources without separate cloud API setup or handing access tokens to a hosted collection service. Cookies and provider session tokens stay in Chrome.
+3. **Obfuscate PII locally.** Replace sensitive values consistently while preserving useful business context, creating a detailed dataset that is safer to use for agent development and testing.
 
-ActOut Collect Client detects and replaces sensitive information locally so users can prepare business data for sharing while preserving useful context. It can still miss private details or change harmless text. Review the protected output before sharing.
-
-Results across all **1,541 regression cases and 2,383 scored regions**. Both detector precisions use GLiNER PII Edge v1.0 at threshold 0.4, followed by a local Qwen3-4B Q4_K_M verifier. Measured on CPU; uncertain short-number cases are excluded.
-
-| Metric | FP32 | UINT8 |
-| --- | ---: | ---: |
-| Accuracy | 91.44% | 92.36% |
-| Precision | 67.53% | 70.14% |
-| Recall | 95.81% | 96.06% |
-| F1 | 79.23% | 81.08% |
-| False-positive rate | 9.46% | 8.40% |
-| Fully protected sensitive values | 388 / 406 | 389 / 406 |
-
-On the same dataset, precision increased from 43.22% to 67.53% in FP32 and 52.07% to 70.14% in UINT8, with unchanged sensitive coverage. The verifier adds a 2.5 GB first-use download and scanning time.
-
-These results do not estimate production accuracy. Recall counts any edit overlap; full protection requires covering the entire sensitive value. See [evaluation details](benchmarks/README.md).
+Explore [actout.io](https://actout.io) for the full ActOut platform and capabilities.
 
 ## Setup
 
@@ -47,6 +34,25 @@ npm start
 Both commands run from the project root, regardless of its name or location. Existing model downloads and settings are reused when available. Re-pair Chrome if prompted after updating. If pairing fails, keep the desktop app open and check that port `4319` is available.
 
 **macOS `EPERM: uv_cwd`:** npm cannot access the current folder and has not loaded the app. Run `cd ~`, then enter the extracted project folder again. If access is still denied, allow your terminal app to access that folder in **System Settings > Privacy & Security > Files and Folders**, or move the project with Finder to `~/Projects/`. Open a new terminal, enter the project's new location, and retry `npm run setup`.
+
+## Local protection
+
+ActOut Collect Client detects and replaces sensitive information locally so users can prepare business data for sharing while preserving useful context. It can still miss private details or change harmless text. Review the protected output before sharing.
+
+Results across all **1,541 regression cases and 2,383 scored regions**. Both detector precisions use GLiNER PII Edge v1.0 at threshold 0.4, followed by a local Qwen3-4B Q4_K_M verifier. Measured on CPU; uncertain short-number cases are excluded.
+
+| Metric | FP32 | UINT8 |
+| --- | ---: | ---: |
+| Accuracy | 91.44% | 92.36% |
+| Precision | 67.53% | 70.14% |
+| Recall | 95.81% | 96.06% |
+| F1 | 79.23% | 81.08% |
+| False-positive rate | 9.46% | 8.40% |
+| Fully protected sensitive values | 388 / 406 | 389 / 406 |
+
+On the same dataset, precision increased from 43.22% to 67.53% in FP32 and 52.07% to 70.14% in UINT8, with unchanged sensitive coverage. The verifier adds a 2.5 GB first-use download and scanning time.
+
+These results do not estimate production accuracy. Recall counts any edit overlap; full protection requires covering the entire sensitive value. See [evaluation details](benchmarks/README.md).
 
 ## Connectors
 
